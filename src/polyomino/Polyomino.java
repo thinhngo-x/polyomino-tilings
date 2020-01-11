@@ -13,6 +13,17 @@ public class Polyomino {
 		this.ycoords = new ArrayList<Integer>(ycoords);
 	}
 	
+	public Polyomino(boolean[][] coords, int minY) {
+		this.xcoords = new ArrayList<Integer>();
+		this.ycoords = new ArrayList<Integer>();
+		for(int x=0; x<coords.length; x++)
+			for(int y=0; y<coords[0].length; y++)
+				if(coords[x][y]) {
+					this.xcoords.add(Integer.valueOf(x));
+					this.ycoords.add(Integer.valueOf(y+minY));
+				}
+	}
+	
 	public Polyomino(String s) {
 		//Example: s = [(0,0), (0,4), (1,0)]
 		String[] splits = s.replaceAll("[\\[( )\\]]","").replace(","," ").split(" ");
@@ -121,6 +132,16 @@ public class Polyomino {
 		}
 	}
 	
+	public String toString() {
+		String rs = "[";
+		int len = xcoords.size();
+		for(int i=0; i<len; i++) {
+			rs += "(" + xcoords.get(i) + "," + ycoords.get(i) + "), ";
+		}
+		rs += "]";
+		return rs;
+	}
+	
 	public static void main(String[] args) {
 		/*
 		Image2d img = new Image2d(100,200);
@@ -134,7 +155,7 @@ public class Polyomino {
 		//
 		/*
 		File fileName = new File("polyominoesINF421.txt");
-		ListOfPolyominos ps = new ListOfPolyominos(fileName);
+		ListOfpolyominoes ps = new ListOfpolyominoes(fileName);
 		int unit = 10;
 		Image2d img = new Image2d(ps.getWidth()*unit, ps.getHeight()*unit);
 		int px = 0;
@@ -143,12 +164,27 @@ public class Polyomino {
 		new Image2dViewer(img);
 		*/
 		//
+		/*
 		Image2d img = new Image2d(100,200);
 		String s = "[(0,1), (0,2), (0,3), (0,4), (1,1), (2,0), (2,1), (2,2)]";
 		Polyomino test = new Polyomino(s);
 		Polyomino test_reflection = test.rotation();
 		test_reflection.draw(10, 50, 90, img, Color.RED);
 		test.draw(10,50, 90, img, Color.YELLOW);
+		new Image2dViewer(img);
+		*/
+		/*
+		Image2d img = new Image2d(100,200);
+		int[][] matrix = {{1,0,0}, {0,1,0}, {0,0,1}};
+		Polyomino test = new Polyomino(matrix);
+		test.draw(10, 50, 50, img, Color.RED);
+		new Image2dViewer(img);
+		*/
+		
+		ListOfPolyominoes free = Enumeration.genFreePolyominoes(4);
+		System.out.print(free.toString());
+		Image2d img = new Image2d(1000, 500);
+		free.draw(10, 10, 100, img , Color.RED);
 		new Image2dViewer(img);
 	}
 }
