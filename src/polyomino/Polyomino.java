@@ -1,6 +1,5 @@
 package polyomino;
 import java.awt.Color;
-import java.io.File;
 import java.util.*;
 
 

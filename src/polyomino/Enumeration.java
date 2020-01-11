@@ -69,6 +69,7 @@ public class Enumeration {
 	}
 }
 
+@SuppressWarnings("unchecked")
 class StackOfPoint2D {
 	public Stack<Integer> x;
 	public Stack<Integer> y;
