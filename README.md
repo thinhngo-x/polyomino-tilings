@@ -1,7 +1,6 @@
-#polyomino-tilings
+Modified name free -> fixed.
 
-#test_dev_branch
+Added method Enumeration.fixedPolyominoes to enumerate all of the fixed polyominoes.
 
-#test
+Algorithm now works better and produces correct answers for p up to 17. Did not test for the rest.
 
-#test_3

@@ -54,6 +54,22 @@ public class Polyomino {
 		return(end_y-start_y+1);
 	}
 	
+	public Integer getMinY() {
+		int minY = Integer.MAX_VALUE;
+		for(Integer y: ycoords) {
+			minY = Math.min(minY, y);
+		}
+		return(minY);
+	}
+	
+	public Integer getMinX() {
+		int minX = Integer.MAX_VALUE;
+		for(Integer x: xcoords) {
+			minX = Math.min(minX, x);
+		}
+		return(minX);
+	}
+	
 	public Polyomino translation(int delta_x, int delta_y) {
 		ArrayList<Integer> new_ycoords = new ArrayList<>();
 		ArrayList<Integer> new_xcoords = new ArrayList<>();
@@ -141,6 +157,24 @@ public class Polyomino {
 		return rs;
 	}
 	
+	public static boolean equal(Polyomino a, Polyomino b) {
+		int w = a.getWidth();
+		int h = a.getHeight();
+		if(h != b.getHeight()) return false;
+		if(w != b.getWidth()) return false;
+		boolean[][] coords = new boolean[w][h];
+		int len = a.xcoords.size();
+		Integer MinY = a.getMinY();
+		for(int i=0; i<len; i++)
+			coords[a.xcoords.get(i)][a.ycoords.get(i)-MinY] = true;
+		len = b.xcoords.size();
+		MinY = b.getMinY();
+		for(int i=0; i<len; i++)
+			if(!coords[b.xcoords.get(i)][b.ycoords.get(i)-MinY])
+				return false;
+		return true;
+	}
+	
 	public static void main(String[] args) {
 		/*
 		Image2d img = new Image2d(100,200);
@@ -180,11 +214,13 @@ public class Polyomino {
 		new Image2dViewer(img);
 		*/
 		
-		ListOfPolyominoes free = Enumeration.genFreePolyominoes(4);
-		System.out.print(free.toString());
-		Image2d img = new Image2d(1000, 500);
-		free.draw(10, 10, 100, img , Color.RED);
-		new Image2dViewer(img);
+		ListOfPolyominoes Fixed = Enumeration.genFixedPolyominoes(9);
+		System.out.println(Enumeration.fixedPolyominoes(17));
+//		Fixed.draw(10, Color.RED);
+//		Image2d img = new Image2d(1000, 500);
+//		Fixed.draw(10, 10, 100, img , Color.RED);
+//		new Image2dViewer(img);
+//		check.draw(10, Color.RED);
 	}
 }
 
