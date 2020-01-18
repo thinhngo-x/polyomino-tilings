@@ -118,7 +118,7 @@ public class ExactCover {
 		ArrayList<ArrayList<Integer>> C = new ArrayList<ArrayList<Integer>>(Arrays.asList(
 				new ArrayList<Integer>(Arrays.asList(3, 5, 6)), new ArrayList<Integer>(Arrays.asList(1, 4, 7)),
 				new ArrayList<Integer>(Arrays.asList(2, 3, 6)), new ArrayList<Integer>(Arrays.asList(1, 4)),
-				new ArrayList<Integer>(Arrays.asList(2, 7)), new ArrayList<Integer>(Arrays.asList(4, 5, 7))));
+				new ArrayList<Integer>(Arrays.asList(2, 7)), new ArrayList<Integer>(Arrays.asList(4, 5))));
 		
 		long t1 = System.currentTimeMillis();
 		System.out.println("The Partitions are formed by:");
