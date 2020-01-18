@@ -3,7 +3,7 @@
 Should use HashSet instead of ArrayList since intuitively, they are sets.
 
 Moreover, Set doesn't allow duplicate elements, which is also a trivial property of Exact Cover problem,
-and we don't really care about the order or need to access randomly so the ArrayList is not necessary.
+and we don't really care about the order or need the quick random access so the ArrayList is not necessary.
 
 Could use the loop for(Object i: Set<Object> set).
 
