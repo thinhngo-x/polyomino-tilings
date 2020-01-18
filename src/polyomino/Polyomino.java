@@ -213,7 +213,7 @@ public class Polyomino {
 		test.draw(10, 50, 50, img, Color.RED);
 		new Image2dViewer(img);
 		*/
-		
+		/*
 		ListOfPolyominoes Fixed = Enumeration.genFixedPolyominoes(9);
 		System.out.println(Enumeration.fixedPolyominoes(17));
 //		Fixed.draw(10, Color.RED);
@@ -221,6 +221,25 @@ public class Polyomino {
 //		Fixed.draw(10, 10, 100, img , Color.RED);
 //		new Image2dViewer(img);
 //		check.draw(10, Color.RED);
+ */
+		Set<Integer> X = new HashSet<>();
+		for(int i=1; i<=7; i++)
+			X.add(i);
+		Set< Set<Integer> > C = new HashSet<>();
+		C.add(new HashSet<Integer>(Arrays.asList(3,5,6)));
+		C.add(new HashSet<Integer>(Arrays.asList(1,4,7)));
+		C.add(new HashSet<Integer>(Arrays.asList(2,3,6)));
+		C.add(new HashSet<Integer>(Arrays.asList(1,4)));
+		C.add(new HashSet<Integer>(Arrays.asList(2,7)));
+		C.add(new HashSet<Integer>(Arrays.asList(4,5,7)));
+		for(Set<Set<Integer>> P: ExactCover.solve(X, C)) {
+			for(Set<Integer> S: P) {
+				for(Integer x: S)
+					System.out.print(x + " ");
+				System.out.print("\n");
+			}
+			System.out.println("\n");
+		}
 	}
 }
 
