@@ -232,7 +232,11 @@ public class Polyomino {
 		C.add(new HashSet<Integer>(Arrays.asList(1,4)));
 		C.add(new HashSet<Integer>(Arrays.asList(2,7)));
 		C.add(new HashSet<Integer>(Arrays.asList(4,5,7)));
-		for(Set<Set<Integer>> P: ExactCover.solve(X, C)) {
+		long start = System.currentTimeMillis();
+		Set<Set<Set<Integer>>> exactCover = ExactCover.solve(X, C);
+		long end = System.currentTimeMillis();
+		System.out.println(end);
+		for(Set<Set<Integer>> P: exactCover) {
 			for(Set<Integer> S: P) {
 				for(Integer x: S)
 					System.out.print(x + " ");
