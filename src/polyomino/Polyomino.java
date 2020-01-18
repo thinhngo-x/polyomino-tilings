@@ -1,6 +1,5 @@
 package polyomino;
 import java.awt.Color;
-import java.io.File;
 import java.util.*;
 
 
@@ -11,6 +10,17 @@ public class Polyomino {
 	public Polyomino(ArrayList<Integer> xcoords, ArrayList<Integer> ycoords) {
 		this.xcoords = new ArrayList<Integer>(xcoords);
 		this.ycoords = new ArrayList<Integer>(ycoords);
+	}
+	
+	public Polyomino(boolean[][] coords, int minY) {
+		this.xcoords = new ArrayList<Integer>();
+		this.ycoords = new ArrayList<Integer>();
+		for(int x=0; x<coords.length; x++)
+			for(int y=0; y<coords[0].length; y++)
+				if(coords[x][y]) {
+					this.xcoords.add(Integer.valueOf(x));
+					this.ycoords.add(Integer.valueOf(y+minY));
+				}
 	}
 	
 	public Polyomino(String s) {
@@ -42,6 +52,22 @@ public class Polyomino {
 			end_y = Math.max(end_y, y);
 		}
 		return(end_y-start_y+1);
+	}
+	
+	public Integer getMinY() {
+		int minY = Integer.MAX_VALUE;
+		for(Integer y: ycoords) {
+			minY = Math.min(minY, y);
+		}
+		return(minY);
+	}
+	
+	public Integer getMinX() {
+		int minX = Integer.MAX_VALUE;
+		for(Integer x: xcoords) {
+			minX = Math.min(minX, x);
+		}
+		return(minX);
 	}
 	
 	public Polyomino translation(int delta_x, int delta_y) {
@@ -121,6 +147,34 @@ public class Polyomino {
 		}
 	}
 	
+	public String toString() {
+		String rs = "[";
+		int len = xcoords.size();
+		for(int i=0; i<len; i++) {
+			rs += "(" + xcoords.get(i) + "," + ycoords.get(i) + "), ";
+		}
+		rs += "]";
+		return rs;
+	}
+	
+	public static boolean equal(Polyomino a, Polyomino b) {
+		int w = a.getWidth();
+		int h = a.getHeight();
+		if(h != b.getHeight()) return false;
+		if(w != b.getWidth()) return false;
+		boolean[][] coords = new boolean[w][h];
+		int len = a.xcoords.size();
+		Integer MinY = a.getMinY();
+		for(int i=0; i<len; i++)
+			coords[a.xcoords.get(i)][a.ycoords.get(i)-MinY] = true;
+		len = b.xcoords.size();
+		MinY = b.getMinY();
+		for(int i=0; i<len; i++)
+			if(!coords[b.xcoords.get(i)][b.ycoords.get(i)-MinY])
+				return false;
+		return true;
+	}
+	
 	public static void main(String[] args) {
 		/*
 		Image2d img = new Image2d(100,200);
@@ -134,7 +188,7 @@ public class Polyomino {
 		//
 		/*
 		File fileName = new File("polyominoesINF421.txt");
-		ListOfPolyominos ps = new ListOfPolyominos(fileName);
+		ListOfpolyominoes ps = new ListOfpolyominoes(fileName);
 		int unit = 10;
 		Image2d img = new Image2d(ps.getWidth()*unit, ps.getHeight()*unit);
 		int px = 0;
@@ -143,6 +197,7 @@ public class Polyomino {
 		new Image2dViewer(img);
 		*/
 		//
+		/*
 		Image2d img = new Image2d(100,200);
 		String s = "[(0,1), (0,2), (0,3), (0,4), (1,1), (2,0), (2,1), (2,2)]";
 		Polyomino test = new Polyomino(s);
@@ -150,6 +205,24 @@ public class Polyomino {
 		test_reflection.draw(10, 50, 90, img, Color.RED);
 		test.draw(10,50, 90, img, Color.YELLOW);
 		new Image2dViewer(img);
+		*/
+		/*
+		Image2d img = new Image2d(100,200);
+		int[][] matrix = {{1,0,0}, {0,1,0}, {0,0,1}};
+		Polyomino test = new Polyomino(matrix);
+		test.draw(10, 50, 50, img, Color.RED);
+		new Image2dViewer(img);
+		*/
+		/*
+		ListOfPolyominoes Fixed = Enumeration.genFixedPolyominoes(9);
+		System.out.println(Enumeration.fixedPolyominoes(17));
+//		Fixed.draw(10, Color.RED);
+//		Image2d img = new Image2d(1000, 500);
+//		Fixed.draw(10, 10, 100, img , Color.RED);
+//		new Image2dViewer(img);
+//		check.draw(10, Color.RED);
+ */
+		
 	}
 }
 
