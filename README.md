@@ -1,6 +1,7 @@
-Modified name free -> fixed.
+Should use HashSet instead of ArrayList since intuitively, they are sets.
 
-Added method Enumeration.fixedPolyominoes to enumerate all of the fixed polyominoes.
+Moreover, Set doesn't allow duplicate elements, which is also a trivial property of Exact Cover problem,
+and we don't really care about the order or need to access randomly
 
-Algorithm now works better and produces correct answers for p up to 17. Did not test for the rest.
+Could use loop(for Object i: Set<Object> set).
 
