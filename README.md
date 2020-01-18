@@ -1,4 +1,4 @@
-#18/01 commented by Thinh
+### 18/01 commented by Thinh
 
 Should use HashSet instead of ArrayList since intuitively, they are sets.
 
