@@ -3,28 +3,28 @@ import java.util.*;
 
 
 public class ExactCover {
-	public static Set<Set<Set<Integer>>> solve(Set<Integer> X, Set< Set<Integer> > C) {
-		Set<Set< Set<Integer> > > result = new HashSet<>();
+	public static <E> Set<Set<Set<E>>> solve(Set<E> X, Set< Set<E> > C) {
+		Set<Set< Set<E> > > result = new HashSet<>();
 		if(X.isEmpty()) {
 			result.add(new HashSet<>());
 			return(result);
 		}
 			
-		Set<Integer> X_ = new HashSet<>(X);
-		Set< Set<Integer> > C_ = new HashSet<>(C);
+		Set<E> X_ = new HashSet<>(X);
+		Set< Set<E> > C_ = new HashSet<>(C);
 		
-		Integer x = X_.iterator().next();
-		for(Set<Integer> S: C) {
+		E x = X_.iterator().next();
+		for(Set<E> S: C) {
 			if(!S.contains(x)) continue;
-			for(Integer y: S) {
+			for(E y: S) {
 				X_.remove(y);
-				for(Set<Integer> otherS: C) {
+				for(Set<E> otherS: C) {
 					if(otherS.contains(y))
 						C_.remove(otherS);
 				}
 			}
 			
-			for(Set<Set<Integer>> P: solve(X_, C_)) {
+			for(Set<Set<E>> P: solve(X_, C_)) {
 				P.add(S);
 				result.add(P);
 			}
