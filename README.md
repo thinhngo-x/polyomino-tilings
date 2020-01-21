@@ -16,3 +16,9 @@ Modified method ExactCover.solve so that it can deal with set of a generic type.
 
 I may re-define the data structure for class polyomino, using Set of Point(x,y) instead, which is more logical
 and easier to manipulate in the exact cover problem
+
+### 21/01 commented by Thinh
+
+Added classes DancingLinks, DataObject and ColumnObject
+
+Not implemented ExactCover using DancingLinks. Need to add in later.
