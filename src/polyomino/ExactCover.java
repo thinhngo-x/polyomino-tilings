@@ -44,6 +44,7 @@ public class ExactCover {
 		C.add(new HashSet<Integer>(Arrays.asList(1,4)));
 		C.add(new HashSet<Integer>(Arrays.asList(2,7)));
 		C.add(new HashSet<Integer>(Arrays.asList(4,5,7)));
+		/*
 		long start = System.currentTimeMillis();
 		Set<Set<Set<Integer>>> exactCover = ExactCover.solve(X, C);
 		long end = System.currentTimeMillis();
@@ -55,6 +56,14 @@ public class ExactCover {
 				System.out.print("\n");
 			}
 			System.out.println("\n");
+		}
+		*/
+		
+		DancingLinks dl = new DancingLinks(X,C);
+		ColumnObject column = (ColumnObject) dl.head.R;
+		while(column != dl.head) {
+			System.out.println(column.S);
+			column = (ColumnObject) column.R;
 		}
 	}
 }
