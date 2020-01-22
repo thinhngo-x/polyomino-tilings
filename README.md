@@ -22,3 +22,11 @@ and easier to manipulate in the exact cover problem
 Added classes DancingLinks, DataObject and ColumnObject
 
 Not implemented ExactCover using DancingLinks. Need to add in later.
+
+### 22/01 commented by Thinh
+
+Added method ExactCover.solveByDancingLinks
+
+Worked well with a small example. Need to check with more cases.
+
+Problem left is to generate a much bigger test case.
