@@ -1,116 +1,38 @@
 package polyomino;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Random;
+import java.util.*;
 
 public class ExactCover {
 
-	public static Random R = new Random();
 
-	public static boolean MethodExactCover(ArrayList<Integer> X, ArrayList<ArrayList<Integer>> C) {
-		if (X.isEmpty()) {
-			return true;
+	public static <E> Set<Set<Set<E>>> solve(Set<E> X, Set< Set<E> > C) {
+		Set<Set< Set<E> > > result = new HashSet<>();
+		if(X.isEmpty()) {
+			result.add(new HashSet<>());
+			return(result);
 		}
-		/* choose random element x */
-		int r = R.nextInt(X.size());
-		Integer x = X.get(r);
-		/* initialize result ArrayList */
-		HashSet<ArrayList<Integer>> P = new HashSet<ArrayList<Integer>>();
-		for (int i = 0; i < C.size(); i++) {
-			/* choose S such that x in S */
-			ArrayList<Integer> S = C.get(i);
-			if (S.contains(x)) {
-				/* copy X */
+			
+		Set<E> X_ = new HashSet<>(X);
+		Set< Set<E> > C_ = new HashSet<>(C);
+		
+		E x = X_.iterator().next();
+		for(Set<E> S: C) {
+			if(!S.contains(x)) continue;
+			for(E y: S) {
+				X_.remove(y);
+				for(Set<E> otherS: C) {
+					if(otherS.contains(y))
+						C_.remove(otherS);
+				}
+			}
+			
+			for(Set<Set<E>> P: solve(X_, C_)) {
 				P.add(S);
-				ArrayList<Integer> X_ = new ArrayList<Integer>();
-				X_.addAll(X);
-				/* copy C */
-				ArrayList<ArrayList<Integer>> C_ = new ArrayList<ArrayList<Integer>>();
-				int a = 0;
-				while (C_.size() != C.size()) {
-					C_.add(new ArrayList<Integer>());
-					C_.get(a).addAll(C.get(a));
-					a++;
-				}
-				for (int j = 0; j < S.size(); j++) {
-					/* all y in S */
-					Integer y = S.get(j);
-					X_.remove(y);
-					for (int k = 0; k < C.size(); k++) {
-						/* choose T such that y in T */
-						ArrayList<Integer> T = C.get(k);
-						if (T.contains(y)) {
-							C_.remove(T);
-						}
-					}
-				}
-				if (!MethodExactCover(X_, C_)) {
-					P.remove(S);
-				} else {
-					System.out.println(P);
-					return true;
-				}
+				result.add(P);
 			}
 		}
-		return false;
-	}
-	
-	public static boolean FasterMethodExactCover(ArrayList<Integer> X, ArrayList<ArrayList<Integer>> C) {
-		if (X.isEmpty()) {
-			return true;
-		}
-		int min = Integer.MAX_VALUE;
-		Integer x = Integer.MAX_VALUE;
-		for (int i = 0; i < C.size(); i++) {
-			min = Math.min(min, C.get(i).size());
-		}
-		for (int i = 0; i < C.size(); i++) {
-			if (C.get(i).size() == min) {
-				int r = R.nextInt(min);
-				x = C.get(i).get(r);
-			}
-		}
-		/* initialize result ArrayList */
-		HashSet<ArrayList<Integer>> P = new HashSet<ArrayList<Integer>>();
-		for (int i = 0; i < C.size(); i++) {
-			/* choose S such that x in S */
-			ArrayList<Integer> S = C.get(i);
-			if (S.contains(x)) {
-				/* copy X */
-				P.add(S);
-				ArrayList<Integer> X_ = new ArrayList<Integer>();
-				X_.addAll(X);
-				/* copy C */
-				ArrayList<ArrayList<Integer>> C_ = new ArrayList<ArrayList<Integer>>();
-				int a = 0;
-				while (C_.size() != C.size()) {
-					C_.add(new ArrayList<Integer>());
-					C_.get(a).addAll(C.get(a));
-					a++;
-				}
-				for (int j = 0; j < S.size(); j++) {
-					/* all y in S */
-					Integer y = S.get(j);
-					X_.remove(y);
-					for (int k = 0; k < C.size(); k++) {
-						/* choose T such that y in T */
-						ArrayList<Integer> T = C.get(k);
-						if (T.contains(y)) {
-							C_.remove(T);
-						}
-					}
-				}
-				if (!MethodExactCover(X_, C_)) {
-					P.remove(S);
-				} else {
-					System.out.println(P);
-					return true;
-				}
-			}
-		}
-		return false;
+		
+		return result;
 	}
 
 	public static void main(String[] args) {
