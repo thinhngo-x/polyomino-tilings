@@ -36,25 +36,41 @@ public class ExactCover {
 	}
 
 	public static void main(String[] args) {
-		ArrayList<Integer> X = new ArrayList<Integer>(Arrays.asList(1, 2, 3, 4, 5, 6, 7));
-		ArrayList<ArrayList<Integer>> C = new ArrayList<ArrayList<Integer>>(Arrays.asList(
-				new ArrayList<Integer>(Arrays.asList(3, 5, 6)), new ArrayList<Integer>(Arrays.asList(1, 4, 7)),
-				new ArrayList<Integer>(Arrays.asList(2, 3, 6)), new ArrayList<Integer>(Arrays.asList(1, 4)),
-				new ArrayList<Integer>(Arrays.asList(2, 7)), new ArrayList<Integer>(Arrays.asList(4, 5))));
+		Set<Integer> X = new HashSet<>();
+		for(int i=1; i<=7; i++)
+			X.add(i);
+		Set< Set<Integer> > C = new HashSet<>();
+		C.add(new HashSet<Integer>(Arrays.asList(3,5,6)));
+		C.add(new HashSet<Integer>(Arrays.asList(1,4,7)));
+		C.add(new HashSet<Integer>(Arrays.asList(2,3,6)));
+		C.add(new HashSet<Integer>(Arrays.asList(1,4)));
+		C.add(new HashSet<Integer>(Arrays.asList(2,7)));
+		C.add(new HashSet<Integer>(Arrays.asList(4,5,7)));
 		
-		long t1 = System.currentTimeMillis();
-		System.out.println("The Partitions are formed by:");
-		MethodExactCover(X, C);
-		long t2 = System.currentTimeMillis();
-		System.out.println("Time Required:");
-		System.out.println(t2-t1);
+		long start = System.currentTimeMillis();
+		Set<Set<Set<Integer>>> exactCover = ExactCover.solve(X, C);
+		long end = System.currentTimeMillis();
+		System.out.println(end-start);
+		for(Set<Set<Integer>> P: exactCover) {
+			for(Set<Integer> S: P) {
+				for(Integer x: S)
+					System.out.print(x + " ");
+				System.out.print("\n");
+			}
+			System.out.println("\n");
+		}
 		
-		long t3 = System.currentTimeMillis();
-		System.out.println("The Partitions are formed by:");
-		FasterMethodExactCover(X, C);
-		long t4 = System.currentTimeMillis();
-		System.out.println("Time Required:");
-		System.out.println(t4-t3);
+		
+/*		DancingLinks dl = new DancingLinks(X,C);
+		ColumnObject x = (ColumnObject) dl.head.R.R;
+		dl.coverColumn(x);
+		dl.uncoverColumn(x);
+		ColumnObject column = (ColumnObject) dl.head.R;
+		while(column != dl.head) {
+			System.out.println(column.S);
+			column = (ColumnObject) column.R;
+		}
+*/
 	}
 
 }
