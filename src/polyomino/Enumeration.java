@@ -2,10 +2,10 @@ package polyomino;
 import java.util.*;
 
 public class Enumeration {
-	public static ListOfPolyominoes genFixedPolyominoes(int p){
+	public static LinkedList<Polyomino> genFixedPolyominoes(int p){
 		StackOfPoint2D untried = new StackOfPoint2D();
 		untried.push(1, p-1); //[(0,0)]
-		ListOfPolyominoes fixed = new ListOfPolyominoes();
+		LinkedList<Polyomino> fixed = new LinkedList<Polyomino>();
 		boolean[][] coords = new boolean[p][2*p-1];
 		boolean[][] occupied = new boolean[p+1][2*p-1];
 		for(int y = -p+1; y<p; y++) {
@@ -21,7 +21,7 @@ public class Enumeration {
 	
 	public static void genFixedPolyominoes(int p, int size, boolean[][] occupied_old,
 			StackOfPoint2D untried_old,
-			boolean[][] coords, ListOfPolyominoes fixed) {
+			boolean[][] coords, LinkedList<Polyomino> fixed) {
 		StackOfPoint2D untried = new StackOfPoint2D(untried_old);
 		boolean[][] occupied = occupied_old.clone();
 		while(!untried.empty()) {
@@ -130,6 +130,21 @@ public class Enumeration {
 		return count;
 	}
 	
+	
+	public static float freePolyominoes(int p) {
+		LinkedList<Polyomino> polyominoes = genFixedPolyominoes(p);
+		float count = 0;
+		for(Polyomino polyo: polyominoes) {
+			if(polyo.isHVADR2())
+				count++;
+			else if(polyo.isHVR() || polyo.isADR() || polyo.isR2())
+				count += 0.5;
+			else if(polyo.isR() || polyo.isA() || polyo.isD() || polyo.isH() || polyo.isV())
+				count += 0.25;
+			else count += 0.125;
+		}
+		return count;
+	}
 }
 
 @SuppressWarnings("unchecked")
