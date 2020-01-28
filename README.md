@@ -16,3 +16,6 @@ Try to add some notes in file Readme.md to know what you've modified and when.
 PS: You should accept (or decline) my pull request before create new branch (from branch dev) to make sure that the branch dev is updated.
 	In this case, it's not important because my changes (in adding class Enumeration) didn't affect your work (on ExactCover). 
 
+###29/01 commented by Thinh
+
+Added method Enumeration.freePolyominoes(p), workd well with p up to 14, OutOfMemoryError for p = 15.

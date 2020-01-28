@@ -307,7 +307,7 @@ public class Polyomino {
 		test.draw(10, 50, 50, img, Color.RED);
 		new Image2dViewer(img);
 		*/
-		for(int p=1; p<=16; p++) {
+		for(int p=15; p<=16; p++) {
 			long start = System.currentTimeMillis();
 			System.out.println(Enumeration.freePolyominoes(p));
 			long end = System.currentTimeMillis();
