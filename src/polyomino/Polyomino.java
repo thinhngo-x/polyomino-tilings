@@ -170,7 +170,7 @@ public class Polyomino {
 		}
 		return squares;
 	}
-	
+	@Override
 	public String toString() {
 		TreeSet<Point> squares = toSet();
 		String rs = "";
@@ -181,6 +181,30 @@ public class Polyomino {
 			rs += " ";
 		}
 		return rs;
+	}
+	
+	@Override
+	public int hashCode() {
+		return toString().hashCode();
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if(o == null || o.getClass() != getClass())
+			return false;
+		Polyomino p = (Polyomino) o;
+		if(!fixedEqualsTo(p))
+			return false;
+		return true;
+	}
+	
+	public Set<String> toSetOfStrings(String name){
+		Set<String> result = new HashSet<>();
+		String space = " ";
+		for(int i=0; i<xcoords.size(); i++)
+			result.add(xcoords.get(i)+ space + ycoords.get(i));
+		result.add(name);
+		return result;
 	}
 	
 	
@@ -307,17 +331,19 @@ public class Polyomino {
 		test.draw(10, 50, 50, img, Color.RED);
 		new Image2dViewer(img);
 		*/
+		/*
 		for(int p=15; p<=16; p++) {
 			long start = System.currentTimeMillis();
 			System.out.println(Enumeration.freePolyominoes(p));
 			long end = System.currentTimeMillis();
 			System.out.println(end-start);
 		}
-//		Fixed.draw(10, Color.RED);
-//		Image2d img = new Image2d(1000, 500);
-//		Fixed.draw(10, 10, 100, img , Color.RED);
-//		new Image2dViewer(img);
-//		check.draw(10, Color.RED);
+		*/
+		
+		LinkedList<Polyomino> list = Enumeration.genFreePolyominoes(11);
+		System.out.print(list.size());
+		
+
 		/*
 		Set<Integer> X = new HashSet<>();
 		for(int i=1; i<=7; i++)
@@ -353,6 +379,19 @@ class Point implements Comparable<Point> {
 	@Override
 	public int hashCode() {
 		return (x+y*71);
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if(o == null) return false;
+		if(o.getClass() != getClass())
+			return false;
+		else {
+			Point t = (Point) o;
+			if(x != t.x || y != t.y)
+				return false;
+		}
+		return true;
 	}
 	
 	public Point hashCode(int hash) {

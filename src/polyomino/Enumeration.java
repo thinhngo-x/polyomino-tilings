@@ -145,6 +145,29 @@ public class Enumeration {
 		}
 		return count;
 	}
+	
+	public static LinkedList<Polyomino> genFreePolyominoes(int p){
+		LinkedList<Polyomino> polyominoes = genFixedPolyominoes(p);
+		LinkedList<Polyomino> free = new LinkedList<>();
+		Set<Polyomino> visited = new HashSet<Polyomino>();
+		for(Polyomino polyo: polyominoes) {
+			if(visited.contains(polyo))
+				continue;
+			else {
+				free.add(polyo);
+				visited.add(polyo);
+				visited.add(polyo.reflection("H").translateToOrigin());
+				visited.add(polyo.reflection("V").translateToOrigin());
+				visited.add(polyo.reflection("A").translateToOrigin());
+				visited.add(polyo.reflection("D").translateToOrigin());
+				visited.add(polyo.rotation().translateToOrigin());
+				visited.add(polyo.rotation().rotation().translateToOrigin());
+				visited.add(polyo.rotation().rotation().rotation().translateToOrigin());
+				visited.add(polyo.rotation().rotation().rotation().rotation().translateToOrigin());
+			}
+		}
+		return free;
+	}
 }
 
 @SuppressWarnings("unchecked")

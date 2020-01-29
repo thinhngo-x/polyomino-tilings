@@ -183,6 +183,7 @@ public class DancingLinks {
 	}
 
 	public static void main(String[] args) {
+
 		Node A = new Node("A");
 		Node B = new Node("B");
 		Node C = new Node("C");
@@ -232,6 +233,9 @@ public class DancingLinks {
 			}
 			System.out.println();
 		}
+		
+		
+		
 	}
 
 }
