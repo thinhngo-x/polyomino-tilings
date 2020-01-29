@@ -5,17 +5,22 @@ import java.util.*;
 import java.io.*;
 
 public class ListOfPolyominoes {
-	private ArrayList<Polyomino> polyominoes;
+	private LinkedList<Polyomino> polyominoes;
 	private int length;
 
 	public ListOfPolyominoes() {
-		polyominoes = new ArrayList<Polyomino>();
+		polyominoes = new LinkedList<Polyomino>();
 		length = 0;
+	}
+	
+	public ListOfPolyominoes(LinkedList<Polyomino> list) {
+		polyominoes = list;
+		length = list.size();
 	}
 
 	public ListOfPolyominoes(File fileName) {
 		ArrayList<String> arrayList = new ArrayList<>();
-		polyominoes = new ArrayList<>();
+		polyominoes = new LinkedList<>();
 		length = 0;
 
 		try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
