@@ -1,5 +1,6 @@
 package polyomino;
 import java.awt.Color;
+import java.io.File;
 import java.util.*;
 
 
@@ -70,16 +71,6 @@ public class Polyomino {
 		return(minX);
 	}
 	
-	public Polyomino translateToOrigin() {
-		Integer x = getMinX();
-		Integer y = Integer.MAX_VALUE;
-		for(int i=0; i<xcoords.size(); i++) {
-			if(xcoords.get(i) == x)
-				y = Math.min(ycoords.get(i), y);
-		}
-		return(this.translation(-x, -y));
-	}
-	
 	public Polyomino translation(int delta_x, int delta_y) {
 		ArrayList<Integer> new_ycoords = new ArrayList<>();
 		ArrayList<Integer> new_xcoords = new ArrayList<>();
@@ -116,25 +107,19 @@ public class Polyomino {
 	}
 	
 	public Polyomino reflection(String axis) {
-		if(axis == "H") {
+		if(axis == "y") {
 			ArrayList<Integer> new_xcoords = new ArrayList<>();
 			for(Integer x: xcoords) {
-				new_xcoords.add(-x);
+				new_xcoords.add(-x-1);
 			}
 			return(new Polyomino(new_xcoords, ycoords));
 		}
-		else if(axis == "V") {
+		else if(axis == "x") {
 			ArrayList<Integer> new_ycoords = new ArrayList<>();
 			for(Integer y: ycoords) {
-				new_ycoords.add(-y);
+				new_ycoords.add(-y-1);
 			}
 			return(new Polyomino(xcoords, new_ycoords));
-		}
-		else if(axis == "A") {
-			return(new Polyomino(ycoords, xcoords));
-		}
-		else if(axis == "D") {
-			return(reflection("H").reflection("A").reflection("H"));
 		}
 		else return null;
 	}
@@ -142,7 +127,7 @@ public class Polyomino {
 	//left quarter-turn
 	public Polyomino rotation() {
 		Polyomino p = new Polyomino(this.ycoords, this.xcoords);
-		p = p.reflection("H");
+		p = p.reflection("y");
 		return(p);
 	}
 	
@@ -163,50 +148,15 @@ public class Polyomino {
 		}
 	}
 	
-	public TreeSet<Point> toSet(){
-		TreeSet<Point> squares = new TreeSet<>();
-		for(int i=0; i<xcoords.size(); i++) {
-			squares.add(new Point(xcoords.get(i), ycoords.get(i)));
-		}
-		return squares;
-	}
-	@Override
 	public String toString() {
-		TreeSet<Point> squares = toSet();
-		String rs = "";
-		for(Point p: squares) {
-			rs += p.x;
-			rs += " ";
-			rs += p.y;
-			rs += " ";
+		String rs = "[";
+		int len = xcoords.size();
+		for(int i=0; i<len; i++) {
+			rs += "(" + xcoords.get(i) + "," + ycoords.get(i) + "), ";
 		}
+		rs += "]";
 		return rs;
 	}
-	
-	@Override
-	public int hashCode() {
-		return toString().hashCode();
-	}
-	
-	@Override
-	public boolean equals(Object o) {
-		if(o == null || o.getClass() != getClass())
-			return false;
-		Polyomino p = (Polyomino) o;
-		if(!fixedEqualsTo(p))
-			return false;
-		return true;
-	}
-	
-	public Set<String> toSetOfStrings(String name){
-		Set<String> result = new HashSet<>();
-		String space = " ";
-		for(int i=0; i<xcoords.size(); i++)
-			result.add(xcoords.get(i)+ space + ycoords.get(i));
-		result.add(name);
-		return result;
-	}
-	
 	
 	public static boolean equal(Polyomino a, Polyomino b) {
 		int w = a.getWidth();
@@ -226,68 +176,22 @@ public class Polyomino {
 		return true;
 	}
 	
-	public boolean fixedEqualsTo(Polyomino p) {
-		TreeSet<Point> squares = this.translateToOrigin().toSet();
-		TreeSet<Point> squaresOfp = p.translateToOrigin().toSet();
-		for(Point square: squaresOfp) {
-			if(!squares.contains(square))
-				return false;
+	public boolean contain(int x, int y) {
+		int len = xcoords.size();
+		for(int i=0; i<len; i++) {
+			if (xcoords.get(i) == x && ycoords.get(i) == y) {
+				return true;
+			}
 		}
-		return true;
+		return false;
 	}
 	
-	public boolean isR() {
-		if(this.rotation().rotation().fixedEqualsTo(this))
-			return true;
-		else return false;
-	}
-	
-	public boolean isR2() {
-		if(this.rotation().fixedEqualsTo(this))
-			return true;
-		else return false;
-	}
-	
-	public boolean isH() {
-		if(this.reflection("H").fixedEqualsTo(this))
-			return true;
-		else return false;
-	}
-	
-	public boolean isV() {
-		if(this.reflection("V").fixedEqualsTo(this))
-			return true;
-		else return false;
-	}
-	
-	public boolean isA() {
-		if(this.reflection("A").fixedEqualsTo(this))
-			return true;
-		else return false;
-	}
-	
-	public boolean isD() {
-		if(this.reflection("D").fixedEqualsTo(this))
-			return true;
-		else return false;
-	}
-	
-	public boolean isHVR() {
-		if(isH() && isV())
-			return true;
-		else return false;
-	}
-	
-	public boolean isADR() {
-		if(isA() && isD())
-			return true;
-		else return false;
-	}
-	
-	public boolean isHVADR2() {
-		if(isHVR() && isADR())
-			return true;
-		else return false;
+	public static Polyomino addUnitPoint(Polyomino P, Integer x, Integer y) {
+		ArrayList<Integer> newxcoords = (ArrayList<Integer>) P.xcoords.clone();
+		ArrayList<Integer> newycoords = (ArrayList<Integer>) P.ycoords.clone();
+		newxcoords.add(x);
+		newycoords.add(y);
+		return new Polyomino(newxcoords,newycoords);
 	}
 	
 	public static void main(String[] args) {
@@ -303,7 +207,7 @@ public class Polyomino {
 		//
 		/*
 		File fileName = new File("polyominoesINF421.txt");
-		ListOfpolyominoes ps = new ListOfpolyominoes(fileName);
+		ListOfPolyominoes ps = new ListOfPolyominoes(fileName);
 		int unit = 10;
 		Image2d img = new Image2d(ps.getWidth()*unit, ps.getHeight()*unit);
 		int px = 0;
@@ -316,13 +220,10 @@ public class Polyomino {
 		Image2d img = new Image2d(100,200);
 		String s = "[(0,1), (0,2), (0,3), (0,4), (1,1), (2,0), (2,1), (2,2)]";
 		Polyomino test = new Polyomino(s);
-		Polyomino test_reflection = test.translateToOrigin();
+		Polyomino test_reflection = test.rotation();
 		test_reflection.draw(10, 50, 90, img, Color.RED);
 		test.draw(10,50, 90, img, Color.YELLOW);
 		new Image2dViewer(img);
-		System.out.println(test.translateToOrigin().toString());
-		System.out.println(test_reflection.translateToOrigin().toString());
-		System.out.println(test.fixedEqualsTo(test_reflection));
 		*/
 		/*
 		Image2d img = new Image2d(100,200);
@@ -331,85 +232,13 @@ public class Polyomino {
 		test.draw(10, 50, 50, img, Color.RED);
 		new Image2dViewer(img);
 		*/
-		/*
-		for(int p=15; p<=16; p++) {
-			long start = System.currentTimeMillis();
-			System.out.println(Enumeration.freePolyominoes(p));
-			long end = System.currentTimeMillis();
-			System.out.println(end-start);
-		}
-		*/
 		
-		LinkedList<Polyomino> list = Enumeration.genFreePolyominoes(11);
-		System.out.print(list.size());
-		
-
-		/*
-		Set<Integer> X = new HashSet<>();
-		for(int i=1; i<=7; i++)
-			X.add(i);
-		Set< Set<Integer> > C = new HashSet<>();
-		C.add(new HashSet<Integer>(Arrays.asList(3,5,6)));
-		C.add(new HashSet<Integer>(Arrays.asList(1,4,7)));
-		C.add(new HashSet<Integer>(Arrays.asList(2,3,6)));
-		C.add(new HashSet<Integer>(Arrays.asList(1,4)));
-		C.add(new HashSet<Integer>(Arrays.asList(2,7)));
-		C.add(new HashSet<Integer>(Arrays.asList(4,5,7)));
-		for(Set<Set<Integer>> P: ExactCover.solve(X, C)) {
-			for(Set<Integer> S: P) {
-				for(Integer x: S)
-					System.out.print(x + " ");
-				System.out.print("\n");
-			}
-			System.out.println("\n");
-		}
-		*/
+		ListOfPolyominoes Fixed = Enumeration.genFixedPolyominoes(9);
+		System.out.println(Enumeration.fixedPolyominoes(17));
+//		Fixed.draw(10, Color.RED);
+//		Image2d img = new Image2d(1000, 500);
+//		Fixed.draw(10, 10, 100, img , Color.RED);
+//		new Image2dViewer(img);
+//		check.draw(10, Color.RED);
 	}
 }
-
-class Point implements Comparable<Point> {
-	int x;
-	int y;
-	
-	Point(int x, int y){
-		this.x = x;
-		this.y = y;
-	}
-	
-	@Override
-	public int hashCode() {
-		return (x+y*71);
-	}
-	
-	@Override
-	public boolean equals(Object o) {
-		if(o == null) return false;
-		if(o.getClass() != getClass())
-			return false;
-		else {
-			Point t = (Point) o;
-			if(x != t.x || y != t.y)
-				return false;
-		}
-		return true;
-	}
-	
-	public Point hashCode(int hash) {
-		Point result = new Point(hash%23, hash/23);
-		return result;
-	}
-	
-	@Override
-	public int compareTo(Point point) {
-		if(this.x < point.x)	return -1;
-		else if(this.x > point.x) return 1;
-		else {
-			if(this.y > point.y) return 1;
-			else if(this.y < point.y) return -1;
-			else return 0;
-		}
-	}
-}
-
-
-
