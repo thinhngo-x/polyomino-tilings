@@ -1,6 +1,9 @@
 package polyomino;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.LinkedList;
+
 class Node {
 
 	Node L, R, U, D, C;
@@ -101,6 +104,17 @@ public class DancingLinks {
 		Node.ConnectLR(c);
 	}
 
+	@SuppressWarnings("unchecked")
+	public DancingLinks(LinkedList<Node> X, HashSet<LinkedList<Node>> C) {
+		this.root = new Node("H");
+		LinkedList<Node> columnobject = (LinkedList<Node>) X.clone();
+		columnobject.add(this.root);
+		Node.ConnectLR(columnobject);
+		for (LinkedList<Node> row : C) {
+			this.AddDataRow(row);
+		}
+	}
+
 	public void AddDataRow(LinkedList<Node> row) {
 		LinkedList<Node> nodes = new LinkedList<Node>();
 		for (Node c : row) {
@@ -141,8 +155,8 @@ public class DancingLinks {
 		return best;
 	}
 
-	public Set<Set<Node>> ExactCover() {
-		Set<Set<Node>> P = new HashSet<>();
+	public HashSet<HashSet<Node>> ExactCover() {
+		HashSet<HashSet<Node>> P = new HashSet<HashSet<Node>>();
 		if (this.root.R == this.root) {
 			P.add(new HashSet<Node>());
 			return P;
@@ -153,7 +167,7 @@ public class DancingLinks {
 			for (Node y = t.L; y != t; y = y.L) {
 				this.CoverColumn(y);
 			}
-			for (Set<Node> sol : this.ExactCover()) {
+			for (HashSet<Node> sol : this.ExactCover()) {
 				sol.add(t);
 				P.add(sol);
 			}
@@ -165,25 +179,24 @@ public class DancingLinks {
 		return P;
 	}
 
-	public static Set<int[]> Generator(int n, int k) {
-		Set<int[]> set = new HashSet<int[]>();
-		int [] array = new int [k];
+	public static HashSet<int[]> Generator(int n, int k) {
+		HashSet<int[]> set = new HashSet<int[]>();
+		int[] array = new int[k];
 		DancingLinks.helper(set, array, 1, n, 0);
 		return set;
 	}
 
-	public static void helper(Set<int[]> set, int [] array, int start, int end, int index) {
+	public static void helper(HashSet<int[]> set, int[] array, int start, int end, int index) {
 		if (array.length == index) {
 			set.add(array.clone());
 		} else if (start <= end) {
 			array[index] = start;
-			DancingLinks.helper(set, array, start+1, end, index+1);
-			DancingLinks.helper(set, array, start+1, end, index);
+			DancingLinks.helper(set, array, start + 1, end, index + 1);
+			DancingLinks.helper(set, array, start + 1, end, index);
 		}
 	}
 
 	public static void main(String[] args) {
-
 		Node A = new Node("A");
 		Node B = new Node("B");
 		Node C = new Node("C");
@@ -191,17 +204,16 @@ public class DancingLinks {
 		Node E = new Node("E");
 		Node F = new Node("F");
 		Node G = new Node("G");
-		LinkedList<Node> l = new LinkedList<Node>();
-		l.addAll(Arrays.asList(A, B, C, D, E, F, G));
-		DancingLinks DL = new DancingLinks(l);
-		DL.AddDataRow((new LinkedList<Node>(Arrays.asList(C, E, F))));
-		DL.AddDataRow((new LinkedList<Node>(Arrays.asList(A, D, G))));
-		DL.AddDataRow((new LinkedList<Node>(Arrays.asList(B, C, F))));
-		DL.AddDataRow((new LinkedList<Node>(Arrays.asList(A, D))));
-		DL.AddDataRow((new LinkedList<Node>(Arrays.asList(B, G))));
-		DL.AddDataRow((new LinkedList<Node>(Arrays.asList(D, E, G))));
-		Set<Set<Node>> sol = DL.ExactCover();
-		for (Set<Node> h : sol) {
+		LinkedList<Node> X = new LinkedList<Node>();
+		X.addAll(Arrays.asList(A, B, C, D, E, F, G));
+		HashSet<LinkedList<Node>> Collection = new HashSet<LinkedList<Node>>();
+		Collection.addAll(Arrays.asList(new LinkedList<Node>(Arrays.asList(C, E, F)),
+				new LinkedList<Node>(Arrays.asList(A, D, G)), new LinkedList<Node>(Arrays.asList(B, C, F)),
+				new LinkedList<Node>(Arrays.asList(A, D)), new LinkedList<Node>(Arrays.asList(B, G)),
+				new LinkedList<Node>(Arrays.asList(D, E, G))));
+		DancingLinks DL = new DancingLinks(X, Collection);
+		HashSet<HashSet<Node>> sol = DL.ExactCover();
+		for (HashSet<Node> h : sol) {
 			for (Node o : h) {
 				Node.PrintLR(o);
 			}
@@ -213,29 +225,26 @@ public class DancingLinks {
 			column.add(new Node(Integer.toString(i)));
 		}
 		DancingLinks DLSubsetCase = new DancingLinks(column);
-		Set<int[]> set = DancingLinks.Generator(n, k);
+		HashSet<int[]> set = DancingLinks.Generator(n, k);
 		for (int[] array : set) {
 			LinkedList<Node> row = new LinkedList<Node>();
 			for (int i : array) {
 				if (i != 0) {
-					row.add(column.get(i-1));
+					row.add(column.get(i - 1));
 				}
 			}
 			DLSubsetCase.AddDataRow(row);
 		}
-		Set<Set<Node>> AllPossibleSol = DLSubsetCase.ExactCover();
+		HashSet<HashSet<Node>> AllPossibleSol = DLSubsetCase.ExactCover();
 		System.out.println("Total number of solutions:");
 		System.out.println(AllPossibleSol.size());
 		System.out.println();
-		for (Set<Node> h : AllPossibleSol) {
+		for (HashSet<Node> h : AllPossibleSol) {
 			for (Node o : h) {
 				Node.PrintLR(o);
 			}
 			System.out.println();
 		}
-		
-		
-		
 	}
 
 }
