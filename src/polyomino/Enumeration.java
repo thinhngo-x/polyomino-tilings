@@ -2,10 +2,10 @@ package polyomino;
 import java.util.*;
 
 public class Enumeration {
-	public static LinkedList<Polyomino> genFixedPolyominoes(int p){
+	public static Set<Polyomino> genFixedPolyominoes(int p){
 		StackOfPoint2D untried = new StackOfPoint2D();
 		untried.push(1, p-1); //[(0,0)]
-		LinkedList<Polyomino> fixed = new LinkedList<Polyomino>();
+		Set<Polyomino> fixed = new HashSet<Polyomino>();
 		boolean[][] coords = new boolean[p][2*p-1];
 		boolean[][] occupied = new boolean[p+1][2*p-1];
 		for(int y = -p+1; y<p; y++) {
@@ -21,7 +21,7 @@ public class Enumeration {
 	
 	public static void genFixedPolyominoes(int p, int size, boolean[][] occupied_old,
 			StackOfPoint2D untried_old,
-			boolean[][] coords, LinkedList<Polyomino> fixed) {
+			boolean[][] coords, Set<Polyomino> fixed) {
 		StackOfPoint2D untried = new StackOfPoint2D(untried_old);
 		boolean[][] occupied = occupied_old.clone();
 		while(!untried.empty()) {
@@ -132,7 +132,7 @@ public class Enumeration {
 	
 	
 	public static float freePolyominoes(int p) {
-		LinkedList<Polyomino> polyominoes = genFixedPolyominoes(p);
+		Set<Polyomino> polyominoes = genFixedPolyominoes(p);
 		float count = 0;
 		for(Polyomino polyo: polyominoes) {
 			if(polyo.isHVADR2())
@@ -146,9 +146,9 @@ public class Enumeration {
 		return count;
 	}
 	
-	public static LinkedList<Polyomino> genFreePolyominoes(int p){
-		LinkedList<Polyomino> polyominoes = genFixedPolyominoes(p);
-		LinkedList<Polyomino> free = new LinkedList<>();
+	public static Set<Polyomino> genFreePolyominoes(int p){
+		Set<Polyomino> polyominoes = genFixedPolyominoes(p);
+		Set<Polyomino> free = new HashSet<>();
 		Set<Polyomino> visited = new HashSet<Polyomino>();
 		for(Polyomino polyo: polyominoes) {
 			if(visited.contains(polyo))

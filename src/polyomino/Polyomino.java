@@ -25,7 +25,7 @@ public class Polyomino {
 	
 	public Polyomino(String s) {
 		//Example: s = [(0,0), (0,4), (1,0)]
-		String[] splits = s.replaceAll("[\\[( )\\]]","").replace(","," ").split(" ");
+		String[] splits = s.replaceAll("[\\[()\\]]","").replace(","," ").split(" ");
 		this.xcoords = new ArrayList<Integer>();
 		this.ycoords = new ArrayList<Integer>();
 		for(int i=0; i<splits.length; i++) {
@@ -161,6 +161,20 @@ public class Polyomino {
 		for(int i=0; i<len; i++) {
 			drawUnitSquare(unit, px, py, xcoords.get(i), ycoords.get(i), img, color);
 		}
+		Set<Point> points = toSet();
+		for(Point p: points) {
+			int x = p.x;
+			int y = p.y;
+			if(!points.contains(new Point(x, y+1)))
+				img.addEdge(px+x*unit, py-(y+1)*unit, px+(x+1)*unit, py-(y+1)*unit, unit/10);
+			if(!points.contains(new Point(p.x, p.y-1)))
+				img.addEdge(px+x*unit, py-y*unit, px+(x+1)*unit, py-y*unit, unit/10);
+			if(!points.contains(new Point(p.x+1, p.y)))
+				img.addEdge(px+(x+1) *unit, py-(y+1)*unit, px+(x+1)*unit, py-y*unit, unit/10);
+			if(!points.contains(new Point(p.x-1, p.y)))
+				img.addEdge(px+x*unit, py-(y+1)*unit, px+x*unit, py-y*unit, unit/10);
+			
+		}
 	}
 	
 	public TreeSet<Point> toSet(){
@@ -193,9 +207,17 @@ public class Polyomino {
 		if(o == null || o.getClass() != getClass())
 			return false;
 		Polyomino p = (Polyomino) o;
-		if(!fixedEqualsTo(p))
+		if(!equalsTo(p))
 			return false;
 		return true;
+	}
+	
+	public Set<String> toSetOfStrings(){
+		Set<String> result = new HashSet<>();
+		String space = " ";
+		for(int i=0; i<xcoords.size(); i++)
+			result.add(xcoords.get(i)+ space + ycoords.get(i) + space);
+		return result;
 	}
 	
 	public Set<String> toSetOfStrings(String name){
@@ -207,22 +229,27 @@ public class Polyomino {
 		return result;
 	}
 	
-	
-	public static boolean equal(Polyomino a, Polyomino b) {
-		int w = a.getWidth();
-		int h = a.getHeight();
-		if(h != b.getHeight()) return false;
-		if(w != b.getWidth()) return false;
-		boolean[][] coords = new boolean[w][h];
-		int len = a.xcoords.size();
-		Integer MinY = a.getMinY();
-		for(int i=0; i<len; i++)
-			coords[a.xcoords.get(i)][a.ycoords.get(i)-MinY] = true;
-		len = b.xcoords.size();
-		MinY = b.getMinY();
-		for(int i=0; i<len; i++)
-			if(!coords[b.xcoords.get(i)][b.ycoords.get(i)-MinY])
+	public boolean isCoveredBy(Polyomino p) {
+		TreeSet<Point> squares = this.toSet();
+		TreeSet<Point> squaresOfp = p.toSet();
+		for(Point square: squares) {
+			if(!squaresOfp.contains(square))
 				return false;
+		}
+		return true;
+	}
+	
+	public boolean equalsTo(Polyomino p) {
+		TreeSet<Point> squares = this.toSet();
+		TreeSet<Point> squaresOfp = p.toSet();
+		for(Point square: squaresOfp) {
+			if(!squares.contains(square))
+				return false;
+		}
+		for(Point square: squares) {
+			if(!squaresOfp.contains(square))
+				return false;
+		}
 		return true;
 	}
 	
@@ -231,6 +258,10 @@ public class Polyomino {
 		TreeSet<Point> squaresOfp = p.translateToOrigin().toSet();
 		for(Point square: squaresOfp) {
 			if(!squares.contains(square))
+				return false;
+		}
+		for(Point square: squares) {
+			if(!squaresOfp.contains(square))
 				return false;
 		}
 		return true;
@@ -340,7 +371,7 @@ public class Polyomino {
 		}
 		*/
 		
-		LinkedList<Polyomino> list = Enumeration.genFreePolyominoes(11);
+		Set<Polyomino> list = Enumeration.genFreePolyominoes(11);
 		System.out.print(list.size());
 		
 
@@ -367,49 +398,6 @@ public class Polyomino {
 	}
 }
 
-class Point implements Comparable<Point> {
-	int x;
-	int y;
-	
-	Point(int x, int y){
-		this.x = x;
-		this.y = y;
-	}
-	
-	@Override
-	public int hashCode() {
-		return (x+y*71);
-	}
-	
-	@Override
-	public boolean equals(Object o) {
-		if(o == null) return false;
-		if(o.getClass() != getClass())
-			return false;
-		else {
-			Point t = (Point) o;
-			if(x != t.x || y != t.y)
-				return false;
-		}
-		return true;
-	}
-	
-	public Point hashCode(int hash) {
-		Point result = new Point(hash%23, hash/23);
-		return result;
-	}
-	
-	@Override
-	public int compareTo(Point point) {
-		if(this.x < point.x)	return -1;
-		else if(this.x > point.x) return 1;
-		else {
-			if(this.y > point.y) return 1;
-			else if(this.y < point.y) return -1;
-			else return 0;
-		}
-	}
-}
 
 
 

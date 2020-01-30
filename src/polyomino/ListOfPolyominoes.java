@@ -5,23 +5,19 @@ import java.util.*;
 import java.io.*;
 
 public class ListOfPolyominoes {
-	private LinkedList<Polyomino> polyominoes;
-	private int length;
+	private Set<Polyomino> polyominoes;
 
 	public ListOfPolyominoes() {
-		polyominoes = new LinkedList<Polyomino>();
-		length = 0;
+		polyominoes = new HashSet<Polyomino>();
 	}
 	
-	public ListOfPolyominoes(LinkedList<Polyomino> list) {
+	public ListOfPolyominoes(Set<Polyomino> list) {
 		polyominoes = list;
-		length = list.size();
 	}
 
 	public ListOfPolyominoes(File fileName) {
 		ArrayList<String> arrayList = new ArrayList<>();
-		polyominoes = new LinkedList<>();
-		length = 0;
+		polyominoes = new HashSet<>();
 
 		try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
 			while (reader.ready()) {
@@ -34,14 +30,6 @@ public class ListOfPolyominoes {
 		for (int i = 0; i < arrayList.size(); i++) {
 			polyominoes.add(new Polyomino(arrayList.get(i)));
 		}
-	}
-	
-	public int length() {
-		return length;
-	}
-	
-	public Polyomino get(int index) {
-		return(polyominoes.get(index));
 	}
 	
 	public int getWidth() {
@@ -62,14 +50,16 @@ public class ListOfPolyominoes {
 
 	public void add(Polyomino p) {
 		polyominoes.add(p);
-		length++;
 	}
 
-	public void draw(int unit, int px, int py, Image2d img, Color color) {
-		for (int i = 0; i < polyominoes.size(); i++) {
-			Polyomino p = polyominoes.get(i);
-			p.draw(unit, px, py, img, color);
-			px += (1 + p.getWidth()) * unit;
+	public void draw(int unit, int px, int py, Image2d img) {
+		for (Polyomino p: polyominoes) {
+			Random rand = new Random();
+			int r = rand.nextInt(255);
+			int g = rand.nextInt(255);
+			int b = rand.nextInt(255);
+			Color randomColor = new Color(r, g, b);
+			p.draw(unit, px, py, img, randomColor);
 		}
 	}
 	
@@ -81,13 +71,13 @@ public class ListOfPolyominoes {
 		return minY;
 	}
 
-	public void draw(int unit, Color color) {
+	public void draw(int unit) {
 		int w = getWidth();
 		int h = getHeight()+2;
 		Image2d img = new Image2d(w*unit, h*unit);
-		int px = 0;
+		int px = 100;
 		int py = h*unit-getMinY();
-		draw(unit, px, py, img, color);
+		draw(unit, px, py, img);
 		new Image2dViewer(img);
 	}
 	
@@ -100,20 +90,8 @@ public class ListOfPolyominoes {
 		return rs;
 	}
 	
-	public boolean check() {
-		ListOfPolyominoes equiv = new ListOfPolyominoes();
-		for(int i=0; i<length-1; i++) {
-			for(int j=i+1; j<length; j++) {
-				if(Polyomino.equal(polyominoes.get(i), polyominoes.get(j))) {
-					equiv.add(polyominoes.get(i));
-					equiv.add(polyominoes.get(j));
-					System.out.println(i+" "+j);
-				}
-			}
-		}
-		equiv.add(polyominoes.get(1597));
-		equiv.draw(10, Color.RED);
-		return true;
+	public int size() {
+		return polyominoes.size();
 	}
 	
 	public void main(String[] args) {
