@@ -4,7 +4,7 @@ import java.awt.Color;
 import java.util.LinkedList;
 
 public class NaiveGenerator {
-	
+
 	public static LinkedList<Polyomino> genFixedPoly(int n) {
 		if (n == 1) {
 			LinkedList<Polyomino> PolyList = new LinkedList<Polyomino>();
@@ -15,7 +15,7 @@ public class NaiveGenerator {
 			LinkedList<Polyomino> PolyList = new LinkedList<Polyomino>();
 			for (Polyomino P : PrevPolyList) {
 				for (Polyomino newP : NaiveGenerator.AddFriends(P)) {
-					if (!NaiveGenerator.contain(PolyList, newP)){
+					if (!NaiveGenerator.containInListTranslation(PolyList, newP)) {
 						PolyList.add(newP);
 					}
 				}
@@ -23,17 +23,38 @@ public class NaiveGenerator {
 			return PolyList;
 		}
 	}
+
+	public static LinkedList<Polyomino> genFreePoly(int n) {
+		LinkedList<Polyomino> PolyList = new LinkedList<Polyomino>();
+		LinkedList<Polyomino> fixed = genFixedPoly(n);
+		for (Polyomino P : fixed) {
+			if (!NaiveGenerator.containInListSymmetry(PolyList, P)) {
+				PolyList.add(P);
+			}
+		}
+		return PolyList;
+	}
 	
+	
+
+	public static int enuFixedPoly(int n) {
+		return genFixedPoly(n).size();
+	}
+	
+	public static int enuFreePoly(int n) {
+		return genFreePoly(n).size();
+	}
+
 	public static LinkedList<Polyomino> AddFriends(Polyomino P) {
 		LinkedList<Polyomino> PolyList = new LinkedList<Polyomino>();
-		for (int i = 0; i < P.getWidth(); i++) {
-			for (int j = 0; j < P.getHeight(); j++) {
+		for (int i = -P.getWidth(); i <= P.getWidth(); i++) {
+			for (int j = -P.getHeight(); j <= P.getHeight(); j++) {
 				if (P.contain(i, j)) {
 					Pair p = new Pair(i, j);
 					for (Pair friend : p.friends()) {
 						Integer X = friend.getX();
 						Integer Y = friend.getY();
-						if (!P.contain(X,Y)) {
+						if (!P.contain(X, Y)) {
 							PolyList.add(Polyomino.addUnitPoint(P, X, Y));
 						}
 					}
@@ -43,14 +64,30 @@ public class NaiveGenerator {
 		return PolyList;
 	}
 
-	public static boolean contain(LinkedList<Polyomino> PolyList, Polyomino P) {
+	public static boolean containInListTranslation(LinkedList<Polyomino> PolyList, Polyomino P) {
 		for (Polyomino Poly : PolyList) {
 			if (NaiveGenerator.translationEquals(P, Poly))
 				return true;
 		}
 		return false;
 	}
-	
+
+	public static boolean containInListSymmetry(LinkedList<Polyomino> PolyList, Polyomino P) {
+		for (Polyomino Poly : PolyList) {
+			if (NaiveGenerator.translationEquals(P, Poly) || NaiveGenerator.translationEquals(P.reflection("H"), Poly)
+					|| NaiveGenerator.translationEquals(P.reflection("V"), Poly)
+					|| NaiveGenerator.translationEquals(P.reflection("A"), Poly)
+					|| NaiveGenerator.translationEquals(P.reflection("D"), Poly)
+					|| NaiveGenerator.translationEquals(P.rotation(), Poly)
+					|| NaiveGenerator.translationEquals(P.rotation().rotation(), Poly)
+					|| NaiveGenerator.translationEquals(P.rotation().rotation().rotation(), Poly)
+					|| NaiveGenerator.translationEquals(P.rotation().rotation().rotation().rotation(), Poly)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public static boolean translationEquals(Polyomino P, Polyomino Poly) {
 		int minx_1 = P.getMinX();
 		int miny_1 = P.getMinY();
@@ -60,14 +97,20 @@ public class NaiveGenerator {
 	}
 
 	public static void main(String[] args) {
-		LinkedList<Polyomino> l = NaiveGenerator.genFixedPoly(5);
-		System.out.println(l.size());
+		int n = 7;
+		LinkedList<Polyomino> l = NaiveGenerator.genFreePoly(n);
+		ListOfPolyominoes list = new ListOfPolyominoes();
+		System.out.println(enuFreePoly(n));
 		for (Polyomino P : l) {
+			list.add(P);
 			System.out.println(P);
 //			Image2d img = new Image2d(100,100);
 //			P.draw(10, 50, 50, img, Color.RED);
 //			new Image2dViewer(img);
 		}
+//		Image2d img = new Image2d(100000, 100);
+//		list.draw(10, 50, 50, img, Color.RED);
+//		new Image2dViewer(img);
 	}
 }
 
@@ -92,11 +135,11 @@ class Pair {
 	public int hashCode() {
 		return this.x * 11 + this.y * 13;
 	}
-	
+
 	public Integer getX() {
 		return this.x;
 	}
-	
+
 	public Integer getY() {
 		return this.y;
 	}
@@ -104,7 +147,7 @@ class Pair {
 	public String toString() {
 		return "(" + this.x + "," + this.y + ") ";
 	}
-	
+
 	public LinkedList<Pair> friends() {
 		LinkedList<Pair> friends = new LinkedList<Pair>();
 		friends.add(new Pair(this.x, this.y + 1));
