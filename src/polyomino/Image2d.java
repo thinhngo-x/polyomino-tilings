@@ -140,7 +140,7 @@ class Image2dViewer extends JFrame {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		add(new Image2dComponent(img));
 		pack();
-		setVisible(true);
+		setVisible(false);
 		xLocation += img.getWidth();
 	}
 

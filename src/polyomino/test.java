@@ -1,9 +1,11 @@
 package polyomino;
 
-import java.util.Set;
+import java.util.*;
+import java.awt.image.BufferedImage;
+import java.io.*;
 
 public class test {
-	public static void tiling1() {
+	public static void tiling1() throws IOException {
 		Polyomino P = new Polyomino("0 9 0 10 1 7 1 8 1 9 1 10 "
 				+ "2 5 2 6 2 7 2 8 2 9 2 10 "
 				+ "3 3 3 4 3 5 3 6 3 7 3 8 3 9 3 10 "
@@ -15,21 +17,22 @@ public class test {
 				+ "9 0 9 1");
 		P = P.reflection("A");
 		Set<ListOfPolyominoes> solutions = ExactCover.tilingsByFreePolyNoRep(P, 5);
-		int i = solutions.size()/2;
-		int j=0;
 		int unit = 50;
+		int i =0;
 		System.out.println(solutions.size());
 		for(ListOfPolyominoes sol: solutions) {
-			if(j == i) {
-				Image2d img = new Image2d(P.getWidth()*unit, P.getHeight()*unit);
-				sol.draw(unit, img);
-				System.out.println(sol.toString());
-			}
-			j++;
+			i++;
+			Image2d img = new Image2d(P.getWidth()*unit, P.getHeight()*unit);
+			sol.draw(unit, img);
+			Image2dComponent component = new Image2dComponent(img);
+			component.setVisible(false);
+			BufferedImage bi = ScreenImage.createImage( component);
+			ScreenImage.writeImage(bi, "results/tiling1/"+i+".png");
+			System.out.println("Printing..."+i);
 		}
 	}
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		tiling1();
 	}
 }
