@@ -61,4 +61,10 @@ public class Point implements Comparable<Point> {
 		friends.add(new Point(this.x - 1, this.y));
 		return friends;
 	}
+	
+	public static boolean isPoint(String s) {
+		if(s.split(" ").length == 2)
+			return true;
+		return false;
+	}
 }

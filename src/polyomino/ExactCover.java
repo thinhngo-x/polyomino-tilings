@@ -101,6 +101,71 @@ public class ExactCover {
 		return result;
 	}
 	
+	public static Set<ListOfPolyominoes> tilingsByFreePolyNoRep(Polyomino P, int n){
+		Set<Polyomino> free = Enumeration.genFreePolyominoes(n);
+		Set<Set<String>> C = new HashSet<>();
+		Set<String> X = P.toSetOfStrings();
+		for(Polyomino p: free) {
+			for(Point point: P.toSet()) {
+				int x = point.getX();
+				int y = point.getY();
+				Polyomino newp = p.translation(x, y);
+				if(newp.rotation().translation(x, y).isCoveredBy(P)) {
+					C.add(newp.rotation().translation(x, y).
+							toSetOfStrings(newp.translateToOrigin().toString()));
+				}
+				if(newp.rotation().rotation().translation(x, y).isCoveredBy(P)) {
+					C.add(newp.rotation().rotation().translation(x, y).
+							toSetOfStrings(newp.translateToOrigin().toString()));
+				}
+				if(newp.rotation().rotation().rotation().translation(x, y).isCoveredBy(P)) {
+					C.add(newp.rotation().rotation().rotation().translation(x, y).
+							toSetOfStrings(newp.translateToOrigin().toString()));
+				}
+				if(newp.reflection("H").translation(x, y).isCoveredBy(P)) {
+					C.add(newp.reflection("H").translation(x, y).
+							toSetOfStrings(newp.translateToOrigin().toString()));
+				}
+				if(newp.reflection("D").translation(x, y).isCoveredBy(P)) {
+					C.add(newp.reflection("D").translation(x, y).
+							toSetOfStrings(newp.translateToOrigin().toString()));
+				}
+				if(newp.reflection("A").translation(x, y).isCoveredBy(P)) {
+					C.add(newp.reflection("A").translation(x, y).
+							toSetOfStrings(newp.translateToOrigin().toString()));
+				}
+				if(newp.reflection("V").translation(x, y).isCoveredBy(P)) {
+					C.add(newp.reflection("V").translation(x, y).
+							toSetOfStrings(newp.translateToOrigin().toString()));
+				}
+				if(newp.isCoveredBy(P)) {
+					C.add(newp.
+							toSetOfStrings(newp.translateToOrigin().toString()));
+				}
+			}
+		}
+		
+		DancingLinks dl = new DancingLinks(X, C);
+		
+		Set<ListOfPolyominoes> result = new HashSet<>();
+		for(Set<Node> solution: dl.exactCover()) {
+			Set<Polyomino> list = new HashSet<>();
+			for (Node h : solution) {
+				String p = "";
+				if(Point.isPoint(h.C.N))
+					p += h.C.N;
+				for (Node x = h.R; x != h; x = x.R) {
+					if(Point.isPoint(x.C.N))
+						p += x.C.N;
+				}
+				list.add(new Polyomino(p));
+			}
+			result.add(new ListOfPolyominoes(list));
+		}
+		
+		return result;
+	}
+	
 	public static void main(String[] args) {
 /*
 		Set<Integer> X = new HashSet<>();
@@ -128,8 +193,9 @@ public class ExactCover {
 		}
 */
 		Polyomino P = new Polyomino("0 0");
-		P = P.dilation(5);
-		Set<ListOfPolyominoes> solutions = ExactCover.tilingsByFixedPolyNoRep(P, 5);
+		P = P.dilation(5).translation(5, 5);
+		System.out.println(P.toString());
+		Set<ListOfPolyominoes> solutions = ExactCover.tilingsByFreePolyNoRep(P, 5);
 		int i = solutions.size()/2;
 		int j=0;
 		int unit = 50;

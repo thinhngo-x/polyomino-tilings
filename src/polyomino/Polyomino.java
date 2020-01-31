@@ -71,23 +71,23 @@ public class Polyomino {
 	}
 	
 	public Polyomino translateToOrigin() {
+		return(this.translation(0, 0));
+	}
+	
+	public Polyomino translation(int toX, int toY) {
+		ArrayList<Integer> new_ycoords = new ArrayList<>();
+		ArrayList<Integer> new_xcoords = new ArrayList<>();
 		Integer x = getMinX();
 		Integer y = Integer.MAX_VALUE;
 		for(int i=0; i<xcoords.size(); i++) {
 			if(xcoords.get(i) == x)
 				y = Math.min(ycoords.get(i), y);
 		}
-		return(this.translation(-x, -y));
-	}
-	
-	public Polyomino translation(int delta_x, int delta_y) {
-		ArrayList<Integer> new_ycoords = new ArrayList<>();
-		ArrayList<Integer> new_xcoords = new ArrayList<>();
-		for(Integer x: xcoords) {
-			new_xcoords.add(x+delta_x);
+		for(Integer xc: xcoords) {
+			new_xcoords.add(xc+toX-x);
 		}
-		for(Integer y: ycoords) {
-			new_ycoords.add(y+delta_y);
+		for(Integer yc: ycoords) {
+			new_ycoords.add(yc+toY-y);
 		}
 		return(new Polyomino(new_xcoords, new_ycoords));
 	}

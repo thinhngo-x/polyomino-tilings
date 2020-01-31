@@ -55,9 +55,9 @@ public class ListOfPolyominoes {
 	public void draw(int unit, int px, int py, Image2d img) {
 		for (Polyomino p: polyominoes) {
 			Random rand = new Random();
-			int r = rand.nextInt(255);
-			int g = rand.nextInt(255);
-			int b = rand.nextInt(255);
+			float r = rand.nextFloat();
+			float g = rand.nextFloat();
+			float b = rand.nextFloat();
 			Color randomColor = new Color(r, g, b);
 			p.draw(unit, px, py, img, randomColor);
 		}
@@ -79,6 +79,7 @@ public class ListOfPolyominoes {
 		new Image2dViewer(img);
 	}
 	
+	@Override
 	public String toString() {
 		String rs = "";
 		for(Polyomino p: polyominoes) {
