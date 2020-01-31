@@ -1,81 +1,122 @@
 package polyomino;
 
 import java.awt.Color;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedList;
 
 public class NaiveGenerator {
 
-	public static HashSet<Pair[]> NaiveGenFixedPolyominoes(int n) {
-		Pair[] sol = new Pair[n];
-		HashSet<Pair[]> allsol = new HashSet<Pair[]>();
-		Integer k = 0;
-		Integer xcoords = 0;
-		Integer ycoords = 0;
-		Pair p = new Pair(xcoords, ycoords);
-		HashMap<Integer, Pair> possible = new HashMap<Integer, Pair>();
-		HashSet<Pair> indication = new HashSet<Pair>();
-		indication.add(p);
-		possible.put(k++, p);
-		helper(allsol, sol, possible, indication, 0, 0, 2 * n + 2, k);
-		/*check translation*/
-		return allsol;
+	public static LinkedList<Polyomino> genFixedPoly(int n) {
+		if (n == 1) {
+			LinkedList<Polyomino> PolyList = new LinkedList<Polyomino>();
+			PolyList.add(new Polyomino("[(0,0)]"));
+			return PolyList;
+		} else {
+			LinkedList<Polyomino> PrevPolyList = genFixedPoly(n - 1);
+			LinkedList<Polyomino> PolyList = new LinkedList<Polyomino>();
+			for (Polyomino P : PrevPolyList) {
+				for (Polyomino newP : NaiveGenerator.AddFriends(P)) {
+					if (!NaiveGenerator.containInListTranslation(PolyList, newP)) {
+						PolyList.add(newP);
+					}
+				}
+			}
+			return PolyList;
+		}
 	}
 
-	public static void helper(HashSet<Pair[]> allsol, Pair[] sol, HashMap<Integer, Pair> possible,
-			HashSet<Pair> indication, int start, int index, int end, int k) {
-		if (sol.length == index) {
-			allsol.add(sol.clone());
-		} else if (start <= end) {
-			Pair p = possible.get(start);
-			sol[index] = p;
-			if (p != null) {
-				Integer xcoords = p.x;
-				Integer ycoords = p.y;
-				Pair q = new Pair(xcoords, ycoords + 1);
-				Pair r = new Pair(xcoords + 1, ycoords);
-				Pair s = new Pair(xcoords, ycoords - 1);
-				Pair t = new Pair(xcoords - 1, ycoords);
-				int k_copy = k;
-				if (indication.add(q)) {
-					possible.put(k++, q);
-				}
-				if (indication.add(r)) {
-					possible.put(k++, r);
-				}
-				if (indication.add(s)) {
-					possible.put(k++, s);
-				}
-				if (indication.add(t)) {
-					possible.put(k++, t);
-				}
-				helper(allsol, sol, possible, indication, start + 1, index + 1, end, k);
-				while (k_copy < k) {
-					indication.remove(possible.get(k_copy));
-					possible.remove(k_copy++);
-				}
-				helper(allsol, sol, possible, indication, start + 1, index, end, k);
+	public static LinkedList<Polyomino> genFreePoly(int n) {
+		LinkedList<Polyomino> PolyList = new LinkedList<Polyomino>();
+		LinkedList<Polyomino> fixed = genFixedPoly(n);
+		for (Polyomino P : fixed) {
+			if (!NaiveGenerator.containInListSymmetry(PolyList, P)) {
+				PolyList.add(P);
 			}
 		}
-	}/*renumber*/
+		return PolyList;
+	}
+	
+	
+
+	public static int enuFixedPoly(int n) {
+		return genFixedPoly(n).size();
+	}
+	
+	public static int enuFreePoly(int n) {
+		return genFreePoly(n).size();
+	}
+
+	public static LinkedList<Polyomino> AddFriends(Polyomino P) {
+		LinkedList<Polyomino> PolyList = new LinkedList<Polyomino>();
+		for (int i = -P.getWidth(); i <= P.getWidth(); i++) {
+			for (int j = -P.getHeight(); j <= P.getHeight(); j++) {
+				if (P.contain(i, j)) {
+					Pair p = new Pair(i, j);
+					for (Pair friend : p.friends()) {
+						Integer X = friend.getX();
+						Integer Y = friend.getY();
+						if (!P.contain(X, Y)) {
+							PolyList.add(Polyomino.addUnitPoint(P, X, Y));
+						}
+					}
+				}
+			}
+		}
+		return PolyList;
+	}
+
+	public static boolean containInListTranslation(LinkedList<Polyomino> PolyList, Polyomino P) {
+		for (Polyomino Poly : PolyList) {
+			if (NaiveGenerator.translationEquals(P, Poly))
+				return true;
+		}
+		return false;
+	}
+
+	public static boolean containInListSymmetry(LinkedList<Polyomino> PolyList, Polyomino P) {
+		for (Polyomino Poly : PolyList) {
+			if (NaiveGenerator.translationEquals(P, Poly) || NaiveGenerator.translationEquals(P.reflection("H"), Poly)
+					|| NaiveGenerator.translationEquals(P.reflection("V"), Poly)
+					|| NaiveGenerator.translationEquals(P.reflection("A"), Poly)
+					|| NaiveGenerator.translationEquals(P.reflection("D"), Poly)
+					|| NaiveGenerator.translationEquals(P.rotation(), Poly)
+					|| NaiveGenerator.translationEquals(P.rotation().rotation(), Poly)
+					|| NaiveGenerator.translationEquals(P.rotation().rotation().rotation(), Poly)
+					|| NaiveGenerator.translationEquals(P.rotation().rotation().rotation().rotation(), Poly)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public static boolean translationEquals(Polyomino P, Polyomino Poly) {
+		int minx_1 = P.getMinX();
+		int miny_1 = P.getMinY();
+		int minx_2 = Poly.getMinX();
+		int miny_2 = Poly.getMinY();
+		return Polyomino.equal(P.translation(-minx_1, -miny_1), Poly.translation(-minx_2, -miny_2));
+	}
 
 	public static void main(String[] args) {
-		HashSet<Pair[]> allsol = NaiveGenerator.NaiveGenFixedPolyominoes(2);
-		System.out.println(allsol.size());
-		for (Pair[] array : allsol) {
-			for (Pair p : array) {
-				System.out.println(p);
-			}
-			System.out.println();
+		int n = 7;
+		LinkedList<Polyomino> l = NaiveGenerator.genFreePoly(n);
+		ListOfPolyominoes list = new ListOfPolyominoes();
+		System.out.println(enuFreePoly(n));
+		for (Polyomino P : l) {
+			list.add(P);
+			System.out.println(P);
+//			Image2d img = new Image2d(100,100);
+//			P.draw(10, 50, 50, img, Color.RED);
+//			new Image2dViewer(img);
 		}
-
+//		Image2d img = new Image2d(100000, 100);
+//		list.draw(10, 50, 50, img, Color.RED);
+//		new Image2dViewer(img);
 	}
 }
 
 class Pair {
-	Integer x;
-	Integer y;
+	private Integer x;
+	private Integer y;
 
 	public Pair(Integer x, Integer y) {
 		this.x = x;
@@ -95,7 +136,24 @@ class Pair {
 		return this.x * 11 + this.y * 13;
 	}
 
+	public Integer getX() {
+		return this.x;
+	}
+
+	public Integer getY() {
+		return this.y;
+	}
+
 	public String toString() {
 		return "(" + this.x + "," + this.y + ") ";
+	}
+
+	public LinkedList<Pair> friends() {
+		LinkedList<Pair> friends = new LinkedList<Pair>();
+		friends.add(new Pair(this.x, this.y + 1));
+		friends.add(new Pair(this.x + 1, this.y));
+		friends.add(new Pair(this.x, this.y - 1));
+		friends.add(new Pair(this.x - 1, this.y));
+		return friends;
 	}
 }
