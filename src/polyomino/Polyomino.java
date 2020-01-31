@@ -167,11 +167,11 @@ public class Polyomino {
 			int y = p.y;
 			if(!points.contains(new Point(x, y+1)))
 				img.addEdge(px+x*unit, py-(y+1)*unit, px+(x+1)*unit, py-(y+1)*unit, unit/10);
-			if(!points.contains(new Point(p.x, p.y-1)))
+			if(!points.contains(new Point(x, y-1)))
 				img.addEdge(px+x*unit, py-y*unit, px+(x+1)*unit, py-y*unit, unit/10);
-			if(!points.contains(new Point(p.x+1, p.y)))
+			if(!points.contains(new Point(x+1, y)))
 				img.addEdge(px+(x+1) *unit, py-(y+1)*unit, px+(x+1)*unit, py-y*unit, unit/10);
-			if(!points.contains(new Point(p.x-1, p.y)))
+			if(!points.contains(new Point(x-1, y)))
 				img.addEdge(px+x*unit, py-(y+1)*unit, px+x*unit, py-y*unit, unit/10);
 			
 		}
@@ -224,7 +224,7 @@ public class Polyomino {
 		Set<String> result = new HashSet<>();
 		String space = " ";
 		for(int i=0; i<xcoords.size(); i++)
-			result.add(xcoords.get(i)+ space + ycoords.get(i));
+			result.add(xcoords.get(i)+ space + ycoords.get(i)+space);
 		result.add(name);
 		return result;
 	}

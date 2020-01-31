@@ -28,6 +28,7 @@ public class DancingLinks {
 	@SuppressWarnings("unchecked")
 	public DancingLinks(Set<String> X, Set<Set<String>> C){
 		LinkedList<Node> X_ = new LinkedList<>();
+		LinkedList<Node> Xname = new LinkedList<>();
 		Set<LinkedList<Node>> C_ = new HashSet<>();
 		Map<String, Node> map = new HashMap<>();
 		for(String x: X) {
@@ -37,8 +38,14 @@ public class DancingLinks {
 		}
 		for(Set<String> c: C) {
 			LinkedList<Node> c_ = new LinkedList<>();
-			for(String cs : c)
+			for(String cs : c) {
+				if(!map.containsKey(cs)) {
+					Node temp = new Node(cs);
+					Xname.add(temp);
+					map.put(cs, temp);
+				}
 				c_.add(map.get(cs));
+			}
 			C_.add(c_);
 		}
 		this.root = new Node("H");

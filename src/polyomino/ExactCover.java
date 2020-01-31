@@ -67,6 +67,40 @@ public class ExactCover {
 		return result;
 	}
 
+	public static Set<ListOfPolyominoes> tilingsByFixedPolyNoRep(Polyomino P, int n){
+		Set<Polyomino> fixed = Enumeration.genFixedPolyominoes(n);
+		Set<Set<String>> C = new HashSet<>();
+		Set<String> X = P.toSetOfStrings();
+		for(Polyomino p: fixed) {
+			for(Point point: P.toSet()) {
+				Polyomino newp = p.translation(point.x, point.y);
+				if(newp.isCoveredBy(P)) {
+					C.add(newp.toSetOfStrings(newp.translateToOrigin().toString()));
+				}
+			}
+		}
+		
+		DancingLinks dl = new DancingLinks(X, C);
+		
+		Set<ListOfPolyominoes> result = new HashSet<>();
+		for(Set<Node> solution: dl.exactCover()) {
+			Set<Polyomino> list = new HashSet<>();
+			for (Node h : solution) {
+				String p = "";
+				if(h.C.N.length() == 4)
+					p += h.C.N;
+				for (Node x = h.R; x != h; x = x.R) {
+					if(x.C.N.length() == 4)
+						p += x.C.N;
+				}
+				list.add(new Polyomino(p));
+			}
+			result.add(new ListOfPolyominoes(list));
+		}
+		
+		return result;
+	}
+	
 	public static void main(String[] args) {
 /*
 		Set<Integer> X = new HashSet<>();
@@ -93,17 +127,19 @@ public class ExactCover {
 			System.out.println("\n");
 		}
 */
-		Polyomino P = new Polyomino("0 0");
-		P = P.dilation(4);
-		Set<ListOfPolyominoes> solutions = ExactCover.tilingsByFixedPoly(P, 4);
+		Polyomino P = new Polyomino("0 0 0 1 0 2");
+		P = P.dilation(3);
+		Set<ListOfPolyominoes> solutions = ExactCover.tilingsByFixedPolyNoRep(P, 8);
 		int i = solutions.size()/2;
 		int j=0;
+		int unit = 50;
+//		System.out.println(solutions.size());
 		for(ListOfPolyominoes sol: solutions) {
-			if(j==i) {
-				sol.draw(50);
-				break;
+			if(j == i) {
+				Image2d img = new Image2d(P.getWidth()*unit, P.getHeight()*unit);
+				sol.draw(50, img);
 			}
-			else j++;
+			j++;
 		}
 		
 /*		DancingLinks dl = new DancingLinks(X,C);

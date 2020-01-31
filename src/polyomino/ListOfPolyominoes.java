@@ -71,12 +71,10 @@ public class ListOfPolyominoes {
 		return minY;
 	}
 
-	public void draw(int unit) {
-		int w = getWidth();
-		int h = getHeight()+2;
-		Image2d img = new Image2d(w*unit, h*unit);
-		int px = 100;
-		int py = h*unit-getMinY();
+	public void draw(int unit, Image2d img) {
+		int h = img.getHeight();
+		int px = 0;
+		int py = h;
 		draw(unit, px, py, img);
 		new Image2dViewer(img);
 	}
