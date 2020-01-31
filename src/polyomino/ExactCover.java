@@ -42,7 +42,7 @@ public class ExactCover {
 		Set<Set<String>> C = new HashSet<>();
 		for(Polyomino p: fixed) {
 			for(Point point: P.toSet()) {
-				Polyomino newp = p.translation(point.x, point.y);
+				Polyomino newp = p.translation(point.getX(), point.getY());
 				if(newp.isCoveredBy(P))
 					C.add(newp.toSetOfStrings());
 			}
@@ -73,7 +73,7 @@ public class ExactCover {
 		Set<String> X = P.toSetOfStrings();
 		for(Polyomino p: fixed) {
 			for(Point point: P.toSet()) {
-				Polyomino newp = p.translation(point.x, point.y);
+				Polyomino newp = p.translation(point.getX(), point.getY());
 				if(newp.isCoveredBy(P)) {
 					C.add(newp.toSetOfStrings(newp.translateToOrigin().toString()));
 				}
@@ -127,9 +127,9 @@ public class ExactCover {
 			System.out.println("\n");
 		}
 */
-		Polyomino P = new Polyomino("0 0 0 1 0 2");
-		P = P.dilation(3);
-		Set<ListOfPolyominoes> solutions = ExactCover.tilingsByFixedPolyNoRep(P, 8);
+		Polyomino P = new Polyomino("0 0");
+		P = P.dilation(5);
+		Set<ListOfPolyominoes> solutions = ExactCover.tilingsByFixedPolyNoRep(P, 5);
 		int i = solutions.size()/2;
 		int j=0;
 		int unit = 50;

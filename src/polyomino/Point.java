@@ -1,12 +1,22 @@
 package polyomino;
 
+import java.util.LinkedList;
+
 public class Point implements Comparable<Point> {
-	int x;
-	int y;
+	private int x;
+	private int y;
 	
 	Point(int x, int y){
 		this.x = x;
 		this.y = y;
+	}
+	
+	public int getX() {
+		return this.x;
+	}
+	
+	public int getY() {
+		return this.y;
 	}
 	
 	@Override
@@ -41,5 +51,14 @@ public class Point implements Comparable<Point> {
 			else if(this.y < point.y) return -1;
 			else return 0;
 		}
+	}
+	
+	public LinkedList<Point> friends() {
+		LinkedList<Point> friends = new LinkedList<Point>();
+		friends.add(new Point(this.x, this.y + 1));
+		friends.add(new Point(this.x + 1, this.y));
+		friends.add(new Point(this.x, this.y - 1));
+		friends.add(new Point(this.x - 1, this.y));
+		return friends;
 	}
 }
