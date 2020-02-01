@@ -1,138 +1,270 @@
 package polyomino;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Random;
+import java.util.*;
+
+import polyomino.Enumeration;
 
 public class ExactCover {
 
-	public static Random R = new Random();
 
-	public static boolean MethodExactCover(ArrayList<Integer> X, ArrayList<ArrayList<Integer>> C) {
-		if (X.isEmpty()) {
-			return true;
+	public static <E> Set<Set<Set<E>>> solve(Set<E> X, Set< Set<E> > C) {
+		Set<Set< Set<E> > > result = new HashSet<>();
+		if(X.isEmpty()) {
+			result.add(new HashSet<>());
+			return(result);
 		}
-		/* choose random element x */
-		int r = R.nextInt(X.size());
-		Integer x = X.get(r);
-		/* initialize result ArrayList */
-		HashSet<ArrayList<Integer>> P = new HashSet<ArrayList<Integer>>();
-		for (int i = 0; i < C.size(); i++) {
-			/* choose S such that x in S */
-			ArrayList<Integer> S = C.get(i);
-			if (S.contains(x)) {
-				/* copy X */
-				P.add(S);
-				ArrayList<Integer> X_ = new ArrayList<Integer>();
-				X_.addAll(X);
-				/* copy C */
-				ArrayList<ArrayList<Integer>> C_ = new ArrayList<ArrayList<Integer>>();
-				int a = 0;
-				while (C_.size() != C.size()) {
-					C_.add(new ArrayList<Integer>());
-					C_.get(a).addAll(C.get(a));
-					a++;
-				}
-				for (int j = 0; j < S.size(); j++) {
-					/* all y in S */
-					Integer y = S.get(j);
-					X_.remove(y);
-					for (int k = 0; k < C.size(); k++) {
-						/* choose T such that y in T */
-						ArrayList<Integer> T = C.get(k);
-						if (T.contains(y)) {
-							C_.remove(T);
-						}
-					}
-				}
-				if (!MethodExactCover(X_, C_)) {
-					P.remove(S);
-				} else {
-					System.out.println(P);
-					return true;
+		
+		E x = X.iterator().next();
+		
+		for(Set<E> S: C) {
+			
+			Set<E> X_ = new HashSet<>(X);
+			Set< Set<E> > C_ = new HashSet<>(C);
+			
+			if(!S.contains(x)) continue;
+			for(E y: S) {
+				X_.remove(y);
+				for(Set<E> otherS: C) {
+					if(otherS.contains(y))
+						C_.remove(otherS);
 				}
 			}
+			
+			for(Set<Set<E>> P: solve(X_, C_)) {
+				P.add(S);
+				result.add(P);
+			}
 		}
-		return false;
+		
+		return result;
 	}
 	
-	public static boolean FasterMethodExactCover(ArrayList<Integer> X, ArrayList<ArrayList<Integer>> C) {
-		if (X.isEmpty()) {
-			return true;
-		}
+	public static <E> E repWithMinNumElement(Set<E> X, Set<Set<E>> C){
 		int min = Integer.MAX_VALUE;
-		Integer x = Integer.MAX_VALUE;
-		for (int i = 0; i < C.size(); i++) {
-			min = Math.min(min, C.get(i).size());
+		for(Set<E> S: C) {
+			if (S.size() < min) min = S.size();
 		}
-		for (int i = 0; i < C.size(); i++) {
-			if (C.get(i).size() == min) {
-				int r = R.nextInt(min);
-				x = C.get(i).get(r);
+		for(Set<E> S: C) {
+			if (S.size() == min) return S.iterator().next();
+		}
+		return null;
+	}
+	
+	public static <E> Set<Set<Set<E>>> fastersolve(Set<E> X, Set< Set<E> > C) {
+		Set<Set< Set<E> > > result = new HashSet<>();
+		if(X.isEmpty()) {
+			result.add(new HashSet<>());
+			return(result);
+		}
+		
+		E x = repWithMinNumElement(X,C);
+		
+		for(Set<E> S: C) {
+			
+			Set<E> X_ = new HashSet<>(X);
+			Set< Set<E> > C_ = new HashSet<>(C);
+			
+			if(!S.contains(x)) continue;
+			for(E y: S) {
+				X_.remove(y);
+				for(Set<E> otherS: C) {
+					if(otherS.contains(y))
+						C_.remove(otherS);
+				}
 			}
-		}
-		/* initialize result ArrayList */
-		HashSet<ArrayList<Integer>> P = new HashSet<ArrayList<Integer>>();
-		for (int i = 0; i < C.size(); i++) {
-			/* choose S such that x in S */
-			ArrayList<Integer> S = C.get(i);
-			if (S.contains(x)) {
-				/* copy X */
+			
+			for(Set<Set<E>> P: solve(X_, C_)) {
 				P.add(S);
-				ArrayList<Integer> X_ = new ArrayList<Integer>();
-				X_.addAll(X);
-				/* copy C */
-				ArrayList<ArrayList<Integer>> C_ = new ArrayList<ArrayList<Integer>>();
-				int a = 0;
-				while (C_.size() != C.size()) {
-					C_.add(new ArrayList<Integer>());
-					C_.get(a).addAll(C.get(a));
-					a++;
-				}
-				for (int j = 0; j < S.size(); j++) {
-					/* all y in S */
-					Integer y = S.get(j);
-					X_.remove(y);
-					for (int k = 0; k < C.size(); k++) {
-						/* choose T such that y in T */
-						ArrayList<Integer> T = C.get(k);
-						if (T.contains(y)) {
-							C_.remove(T);
-						}
-					}
-				}
-				if (!MethodExactCover(X_, C_)) {
-					P.remove(S);
-				} else {
-					System.out.println(P);
-					return true;
-				}
+				result.add(P);
 			}
 		}
-		return false;
+		
+		return result;
+	}
+	
+	public static Set<ListOfPolyominoes> tilingsByFixedPoly(Polyomino P, int n){
+		Set<Polyomino> fixed = Enumeration.genFixedPolyominoes(n);
+		Set<Set<String>> C = new HashSet<>();
+		for(Polyomino p: fixed) {
+			for(Point point: P.toSet()) {
+				Polyomino newp = p.translation(point.getX(), point.getY());
+				if(newp.isCoveredBy(P))
+					C.add(newp.toSetOfStrings());
+			}
+		}
+		
+		Set<String> X = P.toSetOfStrings();
+		DancingLinks dl = new DancingLinks(X, C);
+		
+		Set<ListOfPolyominoes> result = new HashSet<>();
+		for(Set<Node> solution: dl.exactCover()) {
+			Set<Polyomino> list = new HashSet<>();
+			for (Node h : solution) {
+				String p = "";
+				p += h.C.N;
+				for (Node x = h.R; x != h; x = x.R)
+					p += x.C.N;
+				list.add(new Polyomino(p));
+			}
+			result.add(new ListOfPolyominoes(list));
+		}
+		
+		return result;
 	}
 
+	public static Set<ListOfPolyominoes> tilingsByFixedPolyNoRep(Polyomino P, int n){
+		Set<Polyomino> fixed = Enumeration.genFixedPolyominoes(n);
+		Set<Set<String>> C = new HashSet<>();
+		Set<String> X = P.toSetOfStrings();
+		for(Polyomino p: fixed) {
+			for(Point point: P.toSet()) {
+				Polyomino newp = p.translation(point.getX(), point.getY());
+				if(newp.isCoveredBy(P)) {
+					C.add(newp.toSetOfStrings(newp.translateToOrigin().toString()));
+				}
+			}
+		}
+		
+		DancingLinks dl = new DancingLinks(X, C);
+		
+		Set<ListOfPolyominoes> result = new HashSet<>();
+		for(Set<Node> solution: dl.exactCover()) {
+			Set<Polyomino> list = new HashSet<>();
+			for (Node h : solution) {
+				String p = "";
+				if(h.C.N.length() == 4)
+					p += h.C.N;
+				for (Node x = h.R; x != h; x = x.R) {
+					if(x.C.N.length() == 4)
+						p += x.C.N;
+				}
+				list.add(new Polyomino(p));
+			}
+			result.add(new ListOfPolyominoes(list));
+		}
+		
+		return result;
+	}
+	
+	public static Set<ListOfPolyominoes> tilingsByFreePolyNoRep(Polyomino P, int n){
+		Set<Polyomino> free = Enumeration.genFreePolyominoes(n);
+		Set<Set<String>> C = new HashSet<>();
+		Set<String> X = P.toSetOfStrings();
+		for(Polyomino p: free) {
+			for(Point point: P.toSet()) {
+				int x = point.getX();
+				int y = point.getY();
+				Polyomino newp = p.translation(x, y);
+				if(newp.rotation().translation(x, y).isCoveredBy(P)) {
+					C.add(newp.rotation().translation(x, y).
+							toSetOfStrings(newp.translateToOrigin().toString()));
+				}
+				if(newp.rotation().rotation().translation(x, y).isCoveredBy(P)) {
+					C.add(newp.rotation().rotation().translation(x, y).
+							toSetOfStrings(newp.translateToOrigin().toString()));
+				}
+				if(newp.rotation().rotation().rotation().translation(x, y).isCoveredBy(P)) {
+					C.add(newp.rotation().rotation().rotation().translation(x, y).
+							toSetOfStrings(newp.translateToOrigin().toString()));
+				}
+				if(newp.reflection("H").translation(x, y).isCoveredBy(P)) {
+					C.add(newp.reflection("H").translation(x, y).
+							toSetOfStrings(newp.translateToOrigin().toString()));
+				}
+				if(newp.reflection("D").translation(x, y).isCoveredBy(P)) {
+					C.add(newp.reflection("D").translation(x, y).
+							toSetOfStrings(newp.translateToOrigin().toString()));
+				}
+				if(newp.reflection("A").translation(x, y).isCoveredBy(P)) {
+					C.add(newp.reflection("A").translation(x, y).
+							toSetOfStrings(newp.translateToOrigin().toString()));
+				}
+				if(newp.reflection("V").translation(x, y).isCoveredBy(P)) {
+					C.add(newp.reflection("V").translation(x, y).
+							toSetOfStrings(newp.translateToOrigin().toString()));
+				}
+				if(newp.isCoveredBy(P)) {
+					C.add(newp.
+							toSetOfStrings(newp.translateToOrigin().toString()));
+				}
+			}
+		}
+		
+		DancingLinks dl = new DancingLinks(X, C);
+		
+		Set<ListOfPolyominoes> result = new HashSet<>();
+		for(Set<Node> solution: dl.exactCover()) {
+			Set<Polyomino> list = new HashSet<>();
+			for (Node h : solution) {
+				String p = "";
+				if(Point.isPoint(h.C.N))
+					p += h.C.N;
+				for (Node x = h.R; x != h; x = x.R) {
+					if(Point.isPoint(x.C.N))
+						p += x.C.N;
+				}
+				list.add(new Polyomino(p));
+			}
+			result.add(new ListOfPolyominoes(list));
+		}
+		
+		return result;
+	}
+	
 	public static void main(String[] args) {
-		ArrayList<Integer> X = new ArrayList<Integer>(Arrays.asList(1, 2, 3, 4, 5, 6, 7));
-		ArrayList<ArrayList<Integer>> C = new ArrayList<ArrayList<Integer>>(Arrays.asList(
-				new ArrayList<Integer>(Arrays.asList(3, 5, 6)), new ArrayList<Integer>(Arrays.asList(1, 4, 7)),
-				new ArrayList<Integer>(Arrays.asList(2, 3, 6)), new ArrayList<Integer>(Arrays.asList(1, 4)),
-				new ArrayList<Integer>(Arrays.asList(2, 7)), new ArrayList<Integer>(Arrays.asList(4, 5, 7))));
+/*
+		Set<Integer> X = new HashSet<>();
+		for(int i=1; i<=7; i++)
+			X.add(i);
+		Set< Set<Integer> > C = new HashSet<>();
+		C.add(new HashSet<Integer>(Arrays.asList(3,5,6)));
+		C.add(new HashSet<Integer>(Arrays.asList(1,4,7)));
+		C.add(new HashSet<Integer>(Arrays.asList(2,3,6)));
+		C.add(new HashSet<Integer>(Arrays.asList(1,4)));
+		C.add(new HashSet<Integer>(Arrays.asList(2,7)));
+		C.add(new HashSet<Integer>(Arrays.asList(4,5,7)));
+		C.add(new HashSet<Integer>(Arrays.asList(1)));
+		System.out.println(X);
+		System.out.println(C);
+		long start = System.currentTimeMillis();
+		Set<Set<Set<Integer>>> exactCover = ExactCover.solve(X, C);
+		long end = System.currentTimeMillis();
+		System.out.println(end-start);
+		for(Set<Set<Integer>> P: exactCover) {
+			for(Set<Integer> S: P) {
+				for(Integer x: S)
+					System.out.print(x + " ");
+				System.out.print("\n");
+			}
+			System.out.println("\n");
+		}
+*/
+		Polyomino P = new Polyomino("0 0");
+		P = P.dilation(5).translation(5, 5);
+		System.out.println(P.toString());
+		Set<ListOfPolyominoes> solutions = ExactCover.tilingsByFreePolyNoRep(P, 5);
+		int i = solutions.size()/2;
+		int j=0;
+		int unit = 50;
+//		System.out.println(solutions.size());
+		for(ListOfPolyominoes sol: solutions) {
+			if(j == i) {
+				Image2d img = new Image2d(P.getWidth()*unit, P.getHeight()*unit);
+				sol.draw(50, img);
+			}
+			j++;
+		}
 		
-		long t1 = System.currentTimeMillis();
-		System.out.println("The Partitions are formed by:");
-		MethodExactCover(X, C);
-		long t2 = System.currentTimeMillis();
-		System.out.println("Time Required:");
-		System.out.println(t2-t1);
-		
-		long t3 = System.currentTimeMillis();
-		System.out.println("The Partitions are formed by:");
-		FasterMethodExactCover(X, C);
-		long t4 = System.currentTimeMillis();
-		System.out.println("Time Required:");
-		System.out.println(t4-t3);
+/*		DancingLinks dl = new DancingLinks(X,C);
+		ColumnObject x = (ColumnObject) dl.head.R.R;
+		dl.coverColumn(x);
+		dl.uncoverColumn(x);
+		ColumnObject column = (ColumnObject) dl.head.R;
+		while(column != dl.head) {
+			System.out.println(column.S);
+			column = (ColumnObject) column.R;
+		}
+*/
 	}
 
 }
