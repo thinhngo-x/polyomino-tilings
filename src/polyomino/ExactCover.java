@@ -236,6 +236,7 @@ public class ExactCover {
 					C.add(newp.rotation().rotation().rotation().translation(x, y).
 							toSetOfStrings());
 				}
+				
 				if(newp.reflection("H").translation(x, y).isCoveredIn(P)) {
 					C.add(newp.reflection("H").translation(x, y).
 							toSetOfStrings());
@@ -254,6 +255,7 @@ public class ExactCover {
 					C.add(newp.reflection("V").translation(x, y).
 							toSetOfStrings());
 				}
+
 				if(newp.isCoveredIn(P)) {
 					C.add(newp.
 							toSetOfStrings());
