@@ -25,7 +25,7 @@ public class Polyomino {
 	
 	public Polyomino(String s) {
 		//Example: s = [(0,0), (0,4), (1,0)]
-		String[] splits = s.replaceAll("[\\[()\\]]","").replace(","," ").split(" ");
+		String[] splits = s.replaceAll("[\\[( )\\]]","").replace(","," ").split("\\s",0);
 		this.xcoords = new ArrayList<Integer>();
 		this.ycoords = new ArrayList<Integer>();
 		for(int i=0; i<splits.length; i++) {
@@ -35,23 +35,11 @@ public class Polyomino {
 	}
 	
 	public int getWidth() {
-		int start_x = Integer.MAX_VALUE;
-		int end_x = Integer.MIN_VALUE;
-		for(Integer x: xcoords) {
-			start_x = Math.min(start_x, x);
-			end_x = Math.max(end_x, x);
-		}
-		return(end_x-start_x+1);
+		return(getMaxX() - getMinX()+1);
 	}
 	
 	public int getHeight() {
-		int start_y = Integer.MAX_VALUE;
-		int end_y = Integer.MIN_VALUE;
-		for(Integer y: ycoords) {
-			start_y = Math.min(start_y, y);
-			end_y = Math.max(end_y, y);
-		}
-		return(end_y-start_y+1);
+		return(getMaxY() - getMinY()+1);
 	}
 	
 	public Integer getMinY() {
@@ -68,6 +56,22 @@ public class Polyomino {
 			minX = Math.min(minX, x);
 		}
 		return(minX);
+	}
+	
+	public Integer getMaxY() {
+		int maxY = Integer.MIN_VALUE;
+		for(Integer y: ycoords) {
+			maxY = Math.max(maxY, y);
+		}
+		return(maxY);
+	}
+	
+	public Integer getMaxX() {
+		int maxX = Integer.MIN_VALUE;
+		for(Integer x: xcoords) {
+			maxX = Math.max(maxX, x);
+		}
+		return(maxX);
 	}
 	
 	public Polyomino translateToOrigin() {
@@ -149,10 +153,10 @@ public class Polyomino {
 	public void drawUnitSquare(int unit, int px, int py, int x, int y, Image2d img, Color color) {
 		int left = px + x*unit;
 		int right = px + (x+1)*unit;
-		int down = py - (y+1)*unit;
-		int up = py - y*unit;
+		int up = py - (y+1)*unit;
+		int down = py - y*unit;
 		int[] xcoords = {left, right, right, left};
-		int[] ycoords = {up, up, down, down};
+		int[] ycoords = {down, down, up, up};
 		img.addPolygon(xcoords, ycoords, color);
 	}
 	
@@ -190,9 +194,9 @@ public class Polyomino {
 		String rs = "";
 		for(Point p: squares) {
 			rs += p.getX();
-			rs += " ";
+			rs += ",";
 			rs += p.getY();
-			rs += " ";
+			rs += ",";
 		}
 		return rs;
 	}
@@ -214,7 +218,7 @@ public class Polyomino {
 	
 	public Set<String> toSetOfStrings(){
 		Set<String> result = new HashSet<>();
-		String space = " ";
+		String space = ",";
 		for(int i=0; i<xcoords.size(); i++)
 			result.add(xcoords.get(i)+ space + ycoords.get(i) + space);
 		return result;
@@ -222,14 +226,14 @@ public class Polyomino {
 	
 	public Set<String> toSetOfStrings(String name){
 		Set<String> result = new HashSet<>();
-		String space = " ";
+		String space = ",";
 		for(int i=0; i<xcoords.size(); i++)
 			result.add(xcoords.get(i)+ space + ycoords.get(i)+space);
 		result.add(name);
 		return result;
 	}
 	
-	public boolean isCoveredBy(Polyomino p) {
+	public boolean isCoveredIn(Polyomino p) {
 		TreeSet<Point> squares = this.toSet();
 		TreeSet<Point> squaresOfp = p.toSet();
 		for(Point square: squares) {
@@ -389,9 +393,13 @@ public class Polyomino {
 		}
 		*/
 		
-		Set<Polyomino> list = Enumeration.genFreePolyominoes(11);
-		System.out.print(list.size());
-		
+
+		String s = "[(0,0), (0,1), (0,2), (0,3), (0,4), (1,2), (1,3), (2,1), (2,2), (3,0), (3,1), (3,2), (3,3), (3,4)]";
+		Polyomino test = new Polyomino(s);
+		int unit = 10;
+		Image2d img = new Image2d(test.getWidth()*unit,test.getHeight()*unit);
+		test.draw(unit, 0, (test.getMaxY()+1)*unit, img, Color.RED);
+		new Image2dViewer(img);	
 
 		/*
 		Set<Integer> X = new HashSet<>();

@@ -76,7 +76,12 @@ public class ListOfPolyominoes {
 		int px = 0;
 		int py = h;
 		draw(unit, px, py, img);
-		new Image2dViewer(img);
+	}
+	
+	public void draw(int unit, Image2d img, int maxY) {
+		int px = 0;
+		int py = (maxY+1)*unit;
+		draw(unit, px, py, img);
 	}
 	
 	@Override
@@ -91,6 +96,10 @@ public class ListOfPolyominoes {
 	
 	public int size() {
 		return polyominoes.size();
+	}
+	
+	public Polyomino getFirst() {
+		return polyominoes.iterator().next();
 	}
 	
 	public void main(String[] args) {

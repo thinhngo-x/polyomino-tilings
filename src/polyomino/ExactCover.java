@@ -43,7 +43,7 @@ public class ExactCover {
 		for(Polyomino p: fixed) {
 			for(Point point: P.toSet()) {
 				Polyomino newp = p.translation(point.getX(), point.getY());
-				if(newp.isCoveredBy(P))
+				if(newp.isCoveredIn(P))
 					C.add(newp.toSetOfStrings());
 			}
 		}
@@ -74,7 +74,7 @@ public class ExactCover {
 		for(Polyomino p: fixed) {
 			for(Point point: P.toSet()) {
 				Polyomino newp = p.translation(point.getX(), point.getY());
-				if(newp.isCoveredBy(P)) {
+				if(newp.isCoveredIn(P)) {
 					C.add(newp.toSetOfStrings(newp.translateToOrigin().toString()));
 				}
 			}
@@ -110,35 +110,35 @@ public class ExactCover {
 				int x = point.getX();
 				int y = point.getY();
 				Polyomino newp = p.translation(x, y);
-				if(newp.rotation().translation(x, y).isCoveredBy(P)) {
+				if(newp.rotation().translation(x, y).isCoveredIn(P)) {
 					C.add(newp.rotation().translation(x, y).
 							toSetOfStrings(newp.translateToOrigin().toString()));
 				}
-				if(newp.rotation().rotation().translation(x, y).isCoveredBy(P)) {
+				if(newp.rotation().rotation().translation(x, y).isCoveredIn(P)) {
 					C.add(newp.rotation().rotation().translation(x, y).
 							toSetOfStrings(newp.translateToOrigin().toString()));
 				}
-				if(newp.rotation().rotation().rotation().translation(x, y).isCoveredBy(P)) {
+				if(newp.rotation().rotation().rotation().translation(x, y).isCoveredIn(P)) {
 					C.add(newp.rotation().rotation().rotation().translation(x, y).
 							toSetOfStrings(newp.translateToOrigin().toString()));
 				}
-				if(newp.reflection("H").translation(x, y).isCoveredBy(P)) {
+				if(newp.reflection("H").translation(x, y).isCoveredIn(P)) {
 					C.add(newp.reflection("H").translation(x, y).
 							toSetOfStrings(newp.translateToOrigin().toString()));
 				}
-				if(newp.reflection("D").translation(x, y).isCoveredBy(P)) {
+				if(newp.reflection("D").translation(x, y).isCoveredIn(P)) {
 					C.add(newp.reflection("D").translation(x, y).
 							toSetOfStrings(newp.translateToOrigin().toString()));
 				}
-				if(newp.reflection("A").translation(x, y).isCoveredBy(P)) {
+				if(newp.reflection("A").translation(x, y).isCoveredIn(P)) {
 					C.add(newp.reflection("A").translation(x, y).
 							toSetOfStrings(newp.translateToOrigin().toString()));
 				}
-				if(newp.reflection("V").translation(x, y).isCoveredBy(P)) {
+				if(newp.reflection("V").translation(x, y).isCoveredIn(P)) {
 					C.add(newp.reflection("V").translation(x, y).
 							toSetOfStrings(newp.translateToOrigin().toString()));
 				}
-				if(newp.isCoveredBy(P)) {
+				if(newp.isCoveredIn(P)) {
 					C.add(newp.
 							toSetOfStrings(newp.translateToOrigin().toString()));
 				}
@@ -165,6 +165,78 @@ public class ExactCover {
 		
 		return result;
 	}
+	
+	public static Map<Polyomino,Set<ListOfPolyominoes>> tilingOfDilate(int n, int k){
+		Set<Polyomino> free = Enumeration.genFreePolyominoes(n);
+		Map<Polyomino, Set<ListOfPolyominoes>> map = new HashMap<>(); 
+		
+		for(Polyomino p: free) {
+			Polyomino P = p.dilation(k);
+			Set<String> X = P.toSetOfStrings();
+			Set<Set<String>> C = new HashSet<>();
+			for(Point point: P.toSet()) {
+				int x = point.getX();
+				int y = point.getY();
+				Polyomino newp = p.translation(x, y);
+				if(newp.rotation().translation(x, y).isCoveredIn(P)) {
+					C.add(newp.rotation().translation(x, y).
+							toSetOfStrings());
+				}
+				if(newp.rotation().rotation().translation(x, y).isCoveredIn(P)) {
+					C.add(newp.rotation().rotation().translation(x, y).
+							toSetOfStrings());
+				}
+				if(newp.rotation().rotation().rotation().translation(x, y).isCoveredIn(P)) {
+					C.add(newp.rotation().rotation().rotation().translation(x, y).
+							toSetOfStrings());
+				}
+				if(newp.reflection("H").translation(x, y).isCoveredIn(P)) {
+					C.add(newp.reflection("H").translation(x, y).
+							toSetOfStrings());
+				}
+				/*
+				if(newp.reflection("D").translation(x, y).isCoveredIn(P)) {
+					C.add(newp.reflection("D").translation(x, y).
+							toSetOfStrings());
+				}
+				if(newp.reflection("A").translation(x, y).isCoveredIn(P)) {
+					C.add(newp.reflection("A").translation(x, y).
+							toSetOfStrings());
+				}
+				*/
+				if(newp.reflection("V").translation(x, y).isCoveredIn(P)) {
+					C.add(newp.reflection("V").translation(x, y).
+							toSetOfStrings());
+				}
+				if(newp.isCoveredIn(P)) {
+					C.add(newp.
+							toSetOfStrings());
+				}
+			}
+			
+			DancingLinks dl = new DancingLinks(X, C);
+			
+			Set<ListOfPolyominoes> solutions = new HashSet<>();
+			for(Set<Node> solution: dl.exactCover()) {
+				Set<Polyomino> list = new HashSet<>();
+				for (Node h : solution) {
+					String s = "";
+					if(Point.isPoint(h.C.N))
+						s += h.C.N;
+					for (Node x = h.R; x != h; x = x.R) {
+						if(Point.isPoint(x.C.N))
+							s += x.C.N;
+					}
+					list.add(new Polyomino(s));
+				}
+				solutions.add(new ListOfPolyominoes(list));
+			}
+			if(!solutions.isEmpty())
+				map.put(P, solutions);
+		}
+		
+		return map;
+	} 
 	
 	public static void main(String[] args) {
 /*
