@@ -13,12 +13,57 @@ public class ExactCover {
 			result.add(new HashSet<>());
 			return(result);
 		}
-			
-		Set<E> X_ = new HashSet<>(X);
-		Set< Set<E> > C_ = new HashSet<>(C);
 		
-		E x = X_.iterator().next();
+		E x = X.iterator().next();
+		
 		for(Set<E> S: C) {
+			
+			Set<E> X_ = new HashSet<>(X);
+			Set< Set<E> > C_ = new HashSet<>(C);
+			
+			if(!S.contains(x)) continue;
+			for(E y: S) {
+				X_.remove(y);
+				for(Set<E> otherS: C) {
+					if(otherS.contains(y))
+						C_.remove(otherS);
+				}
+			}
+			
+			for(Set<Set<E>> P: solve(X_, C_)) {
+				P.add(S);
+				result.add(P);
+			}
+		}
+		
+		return result;
+	}
+	
+	public static <E> E repWithMinNumElement(Set<E> X, Set<Set<E>> C){
+		int min = Integer.MAX_VALUE;
+		for(Set<E> S: C) {
+			if (S.size() < min) min = S.size();
+		}
+		for(Set<E> S: C) {
+			if (S.size() == min) return S.iterator().next();
+		}
+		return null;
+	}
+	
+	public static <E> Set<Set<Set<E>>> fastersolve(Set<E> X, Set< Set<E> > C) {
+		Set<Set< Set<E> > > result = new HashSet<>();
+		if(X.isEmpty()) {
+			result.add(new HashSet<>());
+			return(result);
+		}
+		
+		E x = repWithMinNumElement(X,C);
+		
+		for(Set<E> S: C) {
+			
+			Set<E> X_ = new HashSet<>(X);
+			Set< Set<E> > C_ = new HashSet<>(C);
+			
 			if(!S.contains(x)) continue;
 			for(E y: S) {
 				X_.remove(y);
@@ -139,6 +184,7 @@ public class ExactCover {
 							toSetOfStrings(newp.translateToOrigin().toString()));
 				}
 				if(newp.isCoveredIn(P)) {
+
 					C.add(newp.
 							toSetOfStrings(newp.translateToOrigin().toString()));
 				}
@@ -250,7 +296,9 @@ public class ExactCover {
 		C.add(new HashSet<Integer>(Arrays.asList(1,4)));
 		C.add(new HashSet<Integer>(Arrays.asList(2,7)));
 		C.add(new HashSet<Integer>(Arrays.asList(4,5,7)));
-		
+		C.add(new HashSet<Integer>(Arrays.asList(1)));
+		System.out.println(X);
+		System.out.println(C);
 		long start = System.currentTimeMillis();
 		Set<Set<Set<Integer>>> exactCover = ExactCover.solve(X, C);
 		long end = System.currentTimeMillis();
