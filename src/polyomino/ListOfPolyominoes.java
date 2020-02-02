@@ -15,9 +15,9 @@ public class ListOfPolyominoes {
 		polyominoes = list;
 	}
 
-	public ListOfPolyominoes(File fileName) {
+	public static LinkedList<Polyomino> readFiles(File fileName) {
 		ArrayList<String> arrayList = new ArrayList<>();
-		polyominoes = new HashSet<>();
+		LinkedList<Polyomino> polyominoes = new LinkedList<>();
 
 		try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
 			while (reader.ready()) {
@@ -28,8 +28,9 @@ public class ListOfPolyominoes {
 		}
 
 		for (int i = 0; i < arrayList.size(); i++) {
-			polyominoes.add(new Polyomino(arrayList.get(i)));
+			polyominoes.add(new Polyomino(arrayList.get(i).replaceAll("[\\[( )\\]]","").replace(","," ")));
 		}
+		return polyominoes;
 	}
 	
 	public int getWidth() {
@@ -71,6 +72,15 @@ public class ListOfPolyominoes {
 		return minY;
 	}
 
+	public static void olddraw(LinkedList<Polyomino> poly, int unit, int px, int py, Image2d img) {
+		Color[] color = new Color[] {Color.BLACK,Color.RED,Color.BLUE,Color.GREEN,Color.YELLOW,Color.GRAY};
+		for (int i = 0; i < poly.size(); i++) {
+			Polyomino p = poly.get(i);
+			p.draw(unit, px, py, img, color[i]);
+			px += (1 + p.getWidth()) * unit;
+		}
+	}
+	
 	public void draw(int unit, Image2d img) {
 		int h = img.getHeight();
 		int px = 0;
