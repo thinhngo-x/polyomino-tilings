@@ -25,7 +25,7 @@ public class Polyomino {
 	
 	public Polyomino(String s) {
 		//Example: s = [(0,0), (0,4), (1,0)]
-		String[] splits = s.replaceAll("[\\[( )\\]]","").replace(","," ").split("\\s",0);
+		String[] splits = s.replaceAll("[\\[()\\]]","").replace(","," ").split("\\s",0);
 		this.xcoords = new ArrayList<Integer>();
 		this.ycoords = new ArrayList<Integer>();
 		for(int i=0; i<splits.length; i++) {

@@ -9,7 +9,7 @@ public class test {
 	public static void testElementaryOperations() {
 		Image2d img = new Image2d(1200, 500);
 		String s = "0 0 1 0 2 0 3 0 4 0 2 1 2 2 2 3 0 4 1 4 2 4 3 4 4 4 6 0 6 1 6 2 6 3 6 4 7 3 8 2 9 1 10 0 10 1 10 2 10 3 10 4 12 0 12 1 12 2 12 3 12 4 13 4 14 4 15 4 16 4 13 2 14 2";
-		Polyomino test = new Polyomino(s);
+		Polyomino test = new Polyomino(s.replace(" ", ","));
 		LinkedList<Polyomino> ps = new LinkedList<Polyomino>();
 		ps.add(test);
 		ps.add(test.translation(2, 2));
@@ -304,6 +304,6 @@ public class test {
 
 
 	public static void main(String[] args) throws IOException {
-		testElementaryOperations();
+		testTxtFile();
 	}
 }
