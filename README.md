@@ -80,7 +80,7 @@ Including one field which represents the begining of the structure:
 Methods: 
 * ```void AddDataRow(LinkedList<Node> row)``` add a list of nodes into the dancing links structure.
 * ```HashSet<HashSet<Node>> exactCover()``` execute exact cover method on the current structure.
-* ```HashSet<int[]> Generator(int n, int k)``` generate a set which contains the arrays of **k** size with integers from **1** to **n**.
+* ```HashSet<int[]> Generator(int n, int k)``` generate a set which contains the arrays of size **k** with integers from **1** to **n**.
 
 #### Sudoku
 
@@ -104,10 +104,10 @@ Contains all the test cases for each tasks provided in the handout:
 * ```compareNaiveRedelmeier()``` compare time required by the naive method and the method of Redelmeier to enumerate **all** the **fixed** and **free** polyominoes.
 * ```polyon(int n)``` generate the picture of polyominoes of size **n**
 * ```compareExactCoverDancingLinksOnExampleGiven()``` compare the time required to compute the exact cover of the examples given in the handout.
-* ```compareExactCoverDancingLinksOnProblemNK(int n, int k)``` compare the time required to compute the exact cover of all subsets of size **k** of a ground set with **n** elements.
-* ```tiling1()``` generate the pictures of **all** the tilings of the tilted rectangle by **all** free pentaminoes and compute the number of ways.
-* ```tiling2()``` generate the pictures of **all** the tilings of the triangle by **all** free pentaminoes and compute the number of ways.
-* ```tiling3()``` generate the pictures of the diamond and compute the number of ways of tiling it by **all** free pentaminoes.
+* ```compareExactCoverDancingLinksOnProblemNK(int n, int k)``` compare the time required to compute the exact cover of **all** subsets of size **k** of a ground set with **n** elements.
+* ```tiling1()``` generate the pictures of **all** the tilings of the tilted rectangle by **all** *free* **pentaminoes** and compute the number of ways.
+* ```tiling2()``` generate the pictures of **all** the tilings of the triangle by **all** *free* **pentaminoes** and compute the number of ways.
+* ```tiling3()``` generate the pictures of the diamond and compute the number of ways of tiling it by **all** *free* **pentaminoes**.
 * ```rectiling(String indication, int n)``` generate the pictures of **all** tilings of a rectangle by **all** polyominoes of size **n** according to the **indication** given (```free```/```fixed```) and compute the number of ways.
 * ```tilingOfDilate(int n, int k)```generate the pictures of all the tilings of the polyominoes of size **n** which can cover their own dilate with rate **k** and compute the ways.
 * ```sudoku()``` solve the problem given and compare the time required to compute the solution of Sudoku between the normal exact cover method and dancing links.
