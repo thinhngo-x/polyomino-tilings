@@ -37,12 +37,13 @@ public class Sudoku {
 		int size = grid.length;
 		for (int i = 1; i <= size; i++) {
 			for (int number = 1; number <= size; number++) {
-				X.add("" + i + i);
+				X.add("" + i + number);
 				X.add(("C" + i) + number);
 				X.add(("R" + i) + number);
 				X.add(("B" + i) + number);
 			}
 		}
+		System.out.print(X.size());
 		int sizeOfBox = (int) Math.sqrt(size);
 		for (int i = 0; i < size; i++) {
 			for (int j = 0; j < size; j++) {
