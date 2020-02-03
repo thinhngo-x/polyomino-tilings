@@ -78,21 +78,22 @@ public class Sudoku {
 				Node x = h;
 				do {
 					String s = x.C.N;
-					if(s.length() < 3) continue;
-					switch(s.charAt(0)) {
-					case 'C':
-						column = Character.getNumericValue(s.charAt(1))-1;
-						break;
-					case 'R':
-						row = Character.getNumericValue(s.charAt(1))-1;
-						break;
+					if(s.length() == 3) {
+						switch(s.charAt(0)) {
+						case 'C':
+							column = Character.getNumericValue(s.charAt(1))-1;
+							break;
+						case 'R':
+							row = Character.getNumericValue(s.charAt(1))-1;
+							break;
+						}
+						number = Character.getNumericValue(s.charAt(2));
 					}
-					number = Character.getNumericValue(s.charAt(2));
 					x = x.R;
 				}while(x != h);
 				completedGrid[row][column] = number;
 			}
-			System.out.println(completedGrid.toString());
+			System.out.println(printout(completedGrid));
 			System.out.println();
 		}
 	}
@@ -120,7 +121,11 @@ public class Sudoku {
 				}
 				completedGrid[row][column] = number;
 			}
-			System.out.println(completedGrid.toString());
+			if(!check(completedGrid)) {
+				System.out.println("False!");
+				break;
+			}
+			System.out.println(printout(completedGrid));
 			System.out.println();
 		}
 	}
@@ -128,17 +133,26 @@ public class Sudoku {
 	public String printout(int[][] array) {
 		String rs = "";
 		for(int i=0; i<array.length; i++)
-			rs += array[i].toString()+"\n";
+			rs += Arrays.toString(array[i])+"\n";
 		return rs;
 	}
 	
+	public boolean check(int[][] array) {
+		Set<String> existed = new HashSet<>();
+		int size = array.length;
+		for(int i=1; i<=size; i++)
+			for(int j=1; j<=size; j++) {
+				String row = ("R"+i)+ array[i-1][j-1];
+				String col = ("C"+j)+ array[i-1][j-1];
+				if(existed.contains(row) || existed.contains(col))
+					return false;
+				existed.add(row);
+				existed.add(col);
+			}
+		return true;
+	}
+	
 	public static void main(String[] args) {
-		int[][] grid = {{1,2,4,0},
-				  {0,3,1,0},
-				  {0,0,2,4},
-				  {2,0,0,1}};
-		Sudoku sudoku = new Sudoku(grid);
-		sudoku.solve();
 	}
 	
 	
