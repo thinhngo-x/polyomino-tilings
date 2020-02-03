@@ -192,15 +192,15 @@ public class test {
 		int i = 0;
 		System.out.println("Number of solutions: ");
 		System.out.println(solutions.size());
-		for(ListOfPolyominoes sol: solutions) {
+		for (ListOfPolyominoes sol : solutions) {
 			i++;
 			Image2d img = new Image2d(P.getWidth() * unit, P.getHeight() * unit);
 			sol.draw(unit, img, P.getMaxY());
 			Image2dComponent component = new Image2dComponent(img);
 			component.setVisible(false);
 			BufferedImage bi = ScreenImage.createImage(component);
-			ScreenImage.writeImage(bi, "results/tiling1/"+i+".png");
-			System.out.println("Printing..."+i);
+			ScreenImage.writeImage(bi, "results/tiling1/" + i + ".png");
+			System.out.println("Printing..." + i);
 		}
 	}
 
@@ -297,6 +297,7 @@ public class test {
 			}
 		}
 	}
+
 	public static void tilingOfDilate(int n, int k) throws IOException {
 		Map<Polyomino, Set<ListOfPolyominoes>> solutions = ExactCover.tilingOfDilate(n, k);
 		System.out.println("Number of solutions: ");
@@ -328,8 +329,21 @@ public class test {
 				 {0,0,0,0,6,3,0,7,0},
 				 {0,1,0,5,0,0,0,4,0},
 				 {5,0,6,0,0,0,0,0,0}};
+		System.out.println("Problem: ");
+		System.out.println(Sudoku.printout(grid));
+		System.out.println();
 		Sudoku sudoku = new Sudoku(grid);
+		System.out.println("Solution: ");
+		long start1 = System.currentTimeMillis();
 		sudoku.solve();
+		long end1 = System.currentTimeMillis();
+		System.out.println("Time Required with Dancing Links: ");
+		System.out.println(end1-start1);		
+		long start2 = System.currentTimeMillis();
+		sudoku.solveWithoutDL();
+		long end2 = System.currentTimeMillis();
+		System.out.println("Time Required without Dancing Links: ");
+		System.out.println(end2-start2);
 	}
 
 	public static void main(String[] args) throws IOException {
