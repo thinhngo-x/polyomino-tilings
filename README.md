@@ -1,32 +1,115 @@
-### 18/01 commented by Thinh
+# Polyomino tilings
+List of classes and some main methods
 
-Should use HashSet instead of ArrayList since intuitively, they are sets.
+## Polyomino
+Including two fields which represents a list of coordinates of squares in the polyomino:
+* ```ArrayList<Integer> xcoords``` 
+* ```ArrayList<Integer> ycoords```
 
-Moreover, Set doesn't allow duplicate elements, which is also a trivial property of Exact Cover problem,
-and we don't really care about the order or need the quick random access so the ArrayList is not necessary.
+Methods used to transform the polyomino:
+* ```Polyomino rotation()``` returns the rotation of the polyomino by $\pi/2$ on the left.
+* ```Polyomino translation(int x, int y)``` returns the translation of the polyomino at the position (x,y) if we consider the lowest of the left-most square is the origin of the polyomino.
+* ```Polyomino reflection(String axis)``` returns the reflection of the polyomino through an axis (**H**, **V**, **A** or **D** *resp.* horizontal, vertical, ascending diagonal and descending diagonal).
+* ```Polyomino dilation(int rate)``` returns the dilation of the polyomino by a **rate**
+####  ListOfPolyominoes
+Including one field which represents a set of polyominoes:
+* ```Set<Polyomino> polyominoes```
 
-Could use the loop for(Object i: Set<Object> set).
+Constructor:
+* ```ListOfPolyominoes(Set<Polyomino> polyominoes)```
 
-The return value of method should be the set of solutions.
+Methods:
+* ```LinkedList<Polyominoes> readFiles(File filename)``` returns a list of polyominoes by reading data from a file.
+* ```void draw(int unit, Image2d image, int maxY)``` draws the ListOfPolyominoes by specifying the **unit** of image, the **image** where we shall draw on and the highest y-coordinates among polyominoes in the list.
 
-Read the code on my branch for references (I didn't implement the fast method, you can add it later)
+#### Enumeration
+Including ```static``` methods  to generate and enumerate all free and fixed polyominoes by the method proposed by Redelmeier:
+* ```Set<Polyomino> genFixedPolyominoes(int p)```  returns a set of all fixed polyominoes of size **p**.
+* ```int fixedPolyominoes(int p)``` returns the  number of all fixed polyominoes of size **p**.
+* ```Set<Polyomino> genFreePolyominoes(int p)```  returns a set of all free polyominoes of size **p**.
+* ```int freePolyominoes(int p)``` returns the  number of all free polyominoes of size **p**.
 
-Try to add some notes in file Readme.md to know what you've modified and when.
+#### ExactCover
 
-PS: You should accept (or decline) my pull request before create new branch (from branch dev) to make sure that the branch dev is updated.
-	In this case, it's not important because my changes (in adding class Enumeration) didn't affect your work (on ExactCover). 
+Including ```static``` methods to solve the problems of exact cover by the backtracking method and the problems of polyomino tilings by the dancing links:
+* ```Set<Set<Set<E>>> solve(Set<E> X, Set<Set<E>> C)``` returns a set of solutions to the exact cover problem where the ground set is **X** and the collection of subsets is **C**.
+* ```Set<Set<Set<E>>> fastersolve(Set<E> X, Set<Set<E>> C)``` is an improve of the method above by using a heuristic.
+* ```Set<ListOfPolyominoes> tilingsByFixedPoly(Polyomino P, int n)``` returns a set of polyomino tilings of polyomino **P** by *some* **fixed** polyominoes of size **n**, allowing the repetitions of polyominoes.
+* ```Set<ListOfPolyominoes> tilingsByFixedPolyNoRep(Polyomino P, int n)``` returns a set of polyomino tilings of polyomino **P** by *some* **fixed** polyominoes of size **n**, restricting the use of each polyominoes by one time only.
+* ```Set<ListOfPolyominoes> tilingsByFreePolyNoRep(Polyomino P, int n)``` returns a set of polyomino tilings of polyomino **P** by *some* **free** polyominoes of size **n**, restricting the use of each polyominoes by one time only.
+* ```Map<Polyomino, Set<ListOfPolyominoes>> tilingOfDilate(int n, int k)``` returns a set of polyominoes of size n whose dilation by k can have a tiling by the copies of itself, and associated with it is all its possible tilings using copies.
 
-### 29/01 commented by Thinh
+#### Point
 
-Added method Enumeration.freePolyominoes(p), workd well with p up to 14, OutOfMemoryError for p = 15.
+Including two fields which represents a coordinate or a pair of integers:
+* ```int x```
+* ```int y```
+
+Methods used to manipulate the points:
+* ```boolean isPoint(String s)``` determine whether the string given is a valid point.
 
 
-### 30/1
+#### NaiveGenerator
 
-I have created the class NaiveGenerator.java, which work well when I tested with 1-4, but there is some miscounting from 5 onwards, I still have no idea why and I will figure it out asap. Meanwhile if u have any idea to resolve the problem please let me know.
+Including ```static``` methods to generate and enumerate all free and fixed polyominoes naively:
+* ```LinkedList<Polyomino> genFixedPoly(int n)``` generate all fixed polyominoes of size **n** naively.
+* ```LinkedList<Polyomino> genFreePoly(int n)``` generate all free polyominoes of size **n** naively.
+* ```int enuFixedPoly(int n)``` count all fixed polyominoes of size **n** naively.
+* ```int enuFixedPoly(int n)``` count all free polyominoes of size **n** naively.
 
-I used the data structure LinkedList because it is the easiest to use. I understand that Set will be a more suitable structure for this task but since the polyonomino class do not have hashCode and equals function, HashSet doesn't work for the moment. (Actually I am wondering is it necessary to implement it)
+#### Node
 
-In order to make my algorithm work, I have added 2 methods in Polyomino.java, namely contain and addUnitPoint. I have uploaded to my branch but till now I do not have a clear idea for the pull request, so I just uploaded to my branch and you may modify and clarify if you want.
+Including seven fields which represents the structure of the nodes (DataObject and ColumnObject) in the dancing links:
+* ```Node L```
+* ```Node R```
+* ```Node U```
+* ```Node D```
+* ```Node C```
+* ```int S```
+* ```String N```
 
-Will work on naive method for freePolynominoes tomorrow!
+Methods used to manipulate the nodes: 
+* ```void ConnectLR(LinkedList<Node> l)``` connect the list of nodes given horizontally.
+* ```void (Remove/Recover)This(LR/UD)``` remove/recover the nodes in between the list horizontally/vertically.
+
+#### DancingLinks
+
+Including one field which represents the begining of the structure:
+* ```Node root```
+
+Methods: 
+* ```void AddDataRow(LinkedList<Node> row)``` add a list of nodes into the dancing links structure.
+* ```HashSet<HashSet<Node>> exactCover()``` execute exact cover method on the current structure.
+* ```HashSet<int[]> Generator(int n, int k)``` generate a set which contains the arrays of **k** size with integers from **1** to **n**.
+
+#### Sudoku
+
+Including a field:
+* ```int[][] grid``` represents the initial sudoku grid.
+
+
+Methods:
+* ```Set<String> createGround()``` create the ground set for the exact cover problem.
+* ```Set<Set<String>> createCollection(Set<String> X)``` create the collection set for the exact cover problem.
+* ```void solve()``` prints out the solution if it has one, using the Dancing Links.
+* ```void solveWithoutDL()``` prints out the solution if it has one, using only the backtracking algorithm.
+* ```String printout(int[][] array)``` visualise the Sudoku grid.
+* ```boolean check(int[][] array)``` verify whether it is a valid Sudoku grid.
+
+#### test
+
+Contains all the test cases for each tasks provided in the handout:
+* ```testElementaryOperations``` test the translation, rotation, reflection and dilation properties of polyominoes.
+* ```testTxtFile()``` test the creation of polyominoes from a **txt** file.
+* ```compareNaiveRedelmeier()``` compare time required by the naive method and the method of Redelmeier to enumerate **all** the **fixed** and **free** polyominoes.
+* ```polyon(int n)``` generate the picture of polyominoes of size **n**
+* ```compareExactCoverDancingLinksOnExampleGiven()``` compare the time required to compute the exact cover of the examples given in the handout.
+* ```compareExactCoverDancingLinksOnProblemNK(int n, int k)``` compare the time required to compute the exact cover of all subsets of size **k** of a ground set with **n** elements.
+* ```tiling1()``` generate the pictures of **all** the tilings of the tilted rectangle by **all** free pentaminoes and compute the number of ways.
+* ```tiling2()``` generate the pictures of **all** the tilings of the triangle by **all** free pentaminoes and compute the number of ways.
+* ```tiling3()``` generate the pictures of the diamond and compute the number of ways of tiling it by **all** free pentaminoes.
+* ```rectiling(String indication, int n)``` generate the pictures of **all** tilings of a rectangle by **all** polyominoes of size **n** according to the **indication** given (```free```/```fixed```) and compute the number of ways.
+* ```tilingOfDilate(int n, int k)```generate the pictures of all the tilings of the polyominoes of size **n** which can cover their own dilate with rate **k** and compute the ways.
+* ```sudoku()``` solve the problem given and compare the time required to compute the solution of Sudoku between the normal exact cover method and dancing links.
+
+
