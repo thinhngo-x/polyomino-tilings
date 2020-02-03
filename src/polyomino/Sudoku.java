@@ -130,7 +130,7 @@ public class Sudoku {
 		}
 	}
 	
-	public String printout(int[][] array) {
+	public static String printout(int[][] array) {
 		String rs = "";
 		for(int i=0; i<array.length; i++)
 			rs += Arrays.toString(array[i])+"\n";
@@ -150,10 +150,5 @@ public class Sudoku {
 				existed.add(col);
 			}
 		return true;
-	}
-	
-	public static void main(String[] args) {
-	}
-	
-	
+	}	
 }

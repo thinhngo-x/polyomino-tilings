@@ -339,6 +339,7 @@ public class test {
 		long end1 = System.currentTimeMillis();
 		System.out.println("Time Required with Dancing Links: ");
 		System.out.println(end1-start1);		
+		System.out.println();
 		long start2 = System.currentTimeMillis();
 		sudoku.solveWithoutDL();
 		long end2 = System.currentTimeMillis();
