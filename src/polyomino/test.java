@@ -69,6 +69,7 @@ public class test {
 		}
 		int unit = 50;
 		int i = 0;
+		System.out.println("Number of Free Polyominoes of size " + n + ": ");
 		System.out.println(set.size());
 		for (ListOfPolyominoes sol : set) {
 			i++;
@@ -319,6 +320,16 @@ public class test {
 	}
 
 	public static void main(String[] args) throws IOException {
-
+		testElementaryOperations();
+		testTxtFile();
+		compareNaiveRedelmeier();
+		polyon(5);
+		compareExactCoverDancingLinksOnExampleGiven();
+		compareExactCoverDancingLinksOnProblemNK(6, 3);
+		tiling1();
+		tiling2();
+		tiling3();
+		rectiling("free", 5);
+		tilingOfDilate(8, 4);
 	}
 }
