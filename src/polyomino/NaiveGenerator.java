@@ -33,13 +33,11 @@ public class NaiveGenerator {
 		}
 		return PolyList;
 	}
-	
-	
 
 	public static int enuFixedPoly(int n) {
 		return genFixedPoly(n).size();
 	}
-	
+
 	public static int enuFreePoly(int n) {
 		return genFreePoly(n).size();
 	}
@@ -91,20 +89,4 @@ public class NaiveGenerator {
 		return P.fixedEqualsTo(Poly);
 	}
 
-	public static void main(String[] args) {
-		int n = 7;
-		LinkedList<Polyomino> l = NaiveGenerator.genFreePoly(n);
-		ListOfPolyominoes list = new ListOfPolyominoes();
-		System.out.println(enuFreePoly(n));
-		for (Polyomino P : l) {
-			list.add(P);
-			System.out.println(P);
-//			Image2d img = new Image2d(100,100);
-//			P.draw(10, 50, 50, img, Color.RED);
-//			new Image2dViewer(img);
-		}
-//		Image2d img = new Image2d(100000, 100);
-//		list.draw(10, 50, 50, img, Color.RED);
-//		new Image2dViewer(img);
-	}
 }

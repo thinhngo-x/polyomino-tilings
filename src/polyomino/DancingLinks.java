@@ -24,22 +24,22 @@ public class DancingLinks {
 			this.AddDataRow(row);
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	public DancingLinks(Set<String> X, Set<Set<String>> C){
+	public DancingLinks(Set<String> X, Set<Set<String>> C) {
 		LinkedList<Node> X_ = new LinkedList<>();
 		LinkedList<Node> Xname = new LinkedList<>();
 		Set<LinkedList<Node>> C_ = new HashSet<>();
 		Map<String, Node> map = new HashMap<>();
-		for(String x: X) {
+		for (String x : X) {
 			Node temp = new Node(x);
 			X_.add(temp);
 			map.put(x, temp);
 		}
-		for(Set<String> c: C) {
+		for (Set<String> c : C) {
 			LinkedList<Node> c_ = new LinkedList<>();
-			for(String cs : c) {
-				if(!map.containsKey(cs)) {
+			for (String cs : c) {
+				if (!map.containsKey(cs)) {
 					Node temp = new Node(cs);
 					Xname.add(temp);
 					map.put(cs, temp);
@@ -139,56 +139,4 @@ public class DancingLinks {
 			DancingLinks.helper(set, array, start + 1, end, index);
 		}
 	}
-
-	public static void main(String[] args) {
-		Node A = new Node("A");
-		Node B = new Node("B");
-		Node C = new Node("C");
-		Node D = new Node("D");
-		Node E = new Node("E");
-		Node F = new Node("F");
-		Node G = new Node("G");
-		LinkedList<Node> X = new LinkedList<Node>();
-		X.addAll(Arrays.asList(A, B, C, D, E, F, G));
-		HashSet<LinkedList<Node>> Collection = new HashSet<LinkedList<Node>>();
-		Collection.addAll(Arrays.asList(new LinkedList<Node>(Arrays.asList(C, E, F)),
-				new LinkedList<Node>(Arrays.asList(A, D, G)), new LinkedList<Node>(Arrays.asList(B, C, F)),
-				new LinkedList<Node>(Arrays.asList(A, D)), new LinkedList<Node>(Arrays.asList(B, G)),
-				new LinkedList<Node>(Arrays.asList(D, E, G))));
-		DancingLinks DL = new DancingLinks(X, Collection);
-		HashSet<HashSet<Node>> sol = DL.exactCover();
-		for (HashSet<Node> h : sol) {
-			for (Node o : h) {
-				Node.PrintLR(o);
-			}
-		}
-
-		int n = 6, k = 3;
-		LinkedList<Node> column = new LinkedList<Node>();
-		for (int i = 1; i <= n; i++) {
-			column.add(new Node(Integer.toString(i)));
-		}
-		DancingLinks DLSubsetCase = new DancingLinks(column);
-		HashSet<int[]> set = DancingLinks.Generator(n, k);
-		for (int[] array : set) {
-			LinkedList<Node> row = new LinkedList<Node>();
-			for (int i : array) {
-				if (i != 0) {
-					row.add(column.get(i - 1));
-				}
-			}
-			DLSubsetCase.AddDataRow(row);
-		}
-		HashSet<HashSet<Node>> AllPossibleSol = DLSubsetCase.exactCover();
-		System.out.println("Total number of solutions:");
-		System.out.println(AllPossibleSol.size());
-		System.out.println();
-		for (HashSet<Node> h : AllPossibleSol) {
-			for (Node o : h) {
-				Node.PrintLR(o);
-			}
-			System.out.println();
-		}
-	}
-
 }
