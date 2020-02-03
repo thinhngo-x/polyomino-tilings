@@ -1,96 +1,6 @@
 package polyomino;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.LinkedList;
-
-class Node {
-
-	Node L, R, U, D, C;
-	int S;
-	String N;
-
-	/* Create an empty node right below a ColumnNode in a column */
-	Node(Node C) {
-		if (C.IsColumnNode()) {
-			this.C = C;
-			C.S++;
-			this.D = C.D;
-			this.U = C;
-			C.D = this;
-			this.D.U = this;
-		} else {
-			throw new IllegalArgumentException("Argument is not a column Node!");
-		}
-	}
-
-	/* Create an empty column */
-	Node(String name) {
-		this.L = this;
-		this.R = this;
-		this.U = this;
-		this.D = this;
-		this.C = this;
-		this.S = 0;
-		this.N = name;
-	}
-
-	public boolean IsColumnNode() {
-		return this.N != null;
-	}
-
-	public boolean IsDataNode() {
-		return this.N == null;
-	}
-
-	public static void ConnectLR(LinkedList<Node> l) {
-		Node current = l.poll();
-		Node running = current;
-		for (Node n : l) {
-			running.R = n;
-			n.L = running;
-			running = n;
-		}
-		running.R = current;
-		current.L = running;
-	}
-
-	public static void PrintLR(Node n) {
-		System.out.print(n.C.N);
-		for (Node x = n.R; x != n; x = x.R)
-			System.out.print(" " + x.C.N);
-		System.out.println();
-	}
-
-	public static void PrintAllCombination(Node root) {
-		PrintLR(root);
-		for (Node y = root.R; y != root; y = y.R) {
-			for (Node x = y.D; x != y; x = x.D) {
-				PrintLR(x);
-			}
-		}
-	}
-
-	public static void RemoveThisLR(Node n) {
-		n.L.R = n.R;
-		n.R.L = n.L;
-	}
-
-	public static void RecoverThisLR(Node n) {
-		n.R.L = n;
-		n.L.R = n;
-	}
-
-	public static void RemoveThisUD(Node n) {
-		n.U.D = n.D;
-		n.D.U = n.U;
-	}
-
-	public static void RecoverThisUD(Node n) {
-		n.D.U = n;
-		n.U.D = n;
-	}
-}
+import java.util.*;
 
 public class DancingLinks {
 
@@ -113,6 +23,39 @@ public class DancingLinks {
 		for (LinkedList<Node> row : C) {
 			this.AddDataRow(row);
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public DancingLinks(Set<String> X, Set<Set<String>> C) {
+		LinkedList<Node> X_ = new LinkedList<>();
+		LinkedList<Node> Xname = new LinkedList<>();
+		Set<LinkedList<Node>> C_ = new HashSet<>();
+		Map<String, Node> map = new HashMap<>();
+		for (String x : X) {
+			Node temp = new Node(x);
+			X_.add(temp);
+			map.put(x, temp);
+		}
+		for (Set<String> c : C) {
+			LinkedList<Node> c_ = new LinkedList<>();
+			for (String cs : c) {
+				if (!map.containsKey(cs)) {
+					Node temp = new Node(cs);
+					Xname.add(temp);
+					map.put(cs, temp);
+				}
+				c_.add(map.get(cs));
+			}
+			C_.add(c_);
+		}
+		this.root = new Node("H");
+		LinkedList<Node> columnobject = (LinkedList<Node>) X_.clone();
+		columnobject.add(this.root);
+		Node.ConnectLR(columnobject);
+		for (LinkedList<Node> row : C_) {
+			this.AddDataRow(row);
+		}
+
 	}
 
 	public void AddDataRow(LinkedList<Node> row) {
@@ -155,7 +98,7 @@ public class DancingLinks {
 		return best;
 	}
 
-	public HashSet<HashSet<Node>> ExactCover() {
+	public HashSet<HashSet<Node>> exactCover() {
 		HashSet<HashSet<Node>> P = new HashSet<HashSet<Node>>();
 		if (this.root.R == this.root) {
 			P.add(new HashSet<Node>());
@@ -167,7 +110,7 @@ public class DancingLinks {
 			for (Node y = t.L; y != t; y = y.L) {
 				this.CoverColumn(y);
 			}
-			for (HashSet<Node> sol : this.ExactCover()) {
+			for (HashSet<Node> sol : this.exactCover()) {
 				sol.add(t);
 				P.add(sol);
 			}
@@ -195,56 +138,4 @@ public class DancingLinks {
 			DancingLinks.helper(set, array, start + 1, end, index);
 		}
 	}
-
-	public static void main(String[] args) {
-		Node A = new Node("A");
-		Node B = new Node("B");
-		Node C = new Node("C");
-		Node D = new Node("D");
-		Node E = new Node("E");
-		Node F = new Node("F");
-		Node G = new Node("G");
-		LinkedList<Node> X = new LinkedList<Node>();
-		X.addAll(Arrays.asList(A, B, C, D, E, F, G));
-		HashSet<LinkedList<Node>> Collection = new HashSet<LinkedList<Node>>();
-		Collection.addAll(Arrays.asList(new LinkedList<Node>(Arrays.asList(C, E, F)),
-				new LinkedList<Node>(Arrays.asList(A, D, G)), new LinkedList<Node>(Arrays.asList(B, C, F)),
-				new LinkedList<Node>(Arrays.asList(A, D)), new LinkedList<Node>(Arrays.asList(B, G)),
-				new LinkedList<Node>(Arrays.asList(D, E, G))));
-		DancingLinks DL = new DancingLinks(X, Collection);
-		HashSet<HashSet<Node>> sol = DL.ExactCover();
-		for (HashSet<Node> h : sol) {
-			for (Node o : h) {
-				Node.PrintLR(o);
-			}
-		}
-
-		int n = 6, k = 3;
-		LinkedList<Node> column = new LinkedList<Node>();
-		for (int i = 1; i <= n; i++) {
-			column.add(new Node(Integer.toString(i)));
-		}
-		DancingLinks DLSubsetCase = new DancingLinks(column);
-		HashSet<int[]> set = DancingLinks.Generator(n, k);
-		for (int[] array : set) {
-			LinkedList<Node> row = new LinkedList<Node>();
-			for (int i : array) {
-				if (i != 0) {
-					row.add(column.get(i - 1));
-				}
-			}
-			DLSubsetCase.AddDataRow(row);
-		}
-		HashSet<HashSet<Node>> AllPossibleSol = DLSubsetCase.ExactCover();
-		System.out.println("Total number of solutions:");
-		System.out.println(AllPossibleSol.size());
-		System.out.println();
-		for (HashSet<Node> h : AllPossibleSol) {
-			for (Node o : h) {
-				Node.PrintLR(o);
-			}
-			System.out.println();
-		}
-	}
-
 }

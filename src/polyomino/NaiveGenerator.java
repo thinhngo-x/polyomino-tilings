@@ -1,6 +1,5 @@
 package polyomino;
 
-import java.awt.Color;
 import java.util.LinkedList;
 
 public class NaiveGenerator {
@@ -34,13 +33,11 @@ public class NaiveGenerator {
 		}
 		return PolyList;
 	}
-	
-	
 
 	public static int enuFixedPoly(int n) {
 		return genFixedPoly(n).size();
 	}
-	
+
 	public static int enuFreePoly(int n) {
 		return genFreePoly(n).size();
 	}
@@ -50,8 +47,8 @@ public class NaiveGenerator {
 		for (int i = -P.getWidth(); i <= P.getWidth(); i++) {
 			for (int j = -P.getHeight(); j <= P.getHeight(); j++) {
 				if (P.contain(i, j)) {
-					Pair p = new Pair(i, j);
-					for (Pair friend : p.friends()) {
+					Point p = new Point(i, j);
+					for (Point friend : p.friends()) {
 						Integer X = friend.getX();
 						Integer Y = friend.getY();
 						if (!P.contain(X, Y)) {
@@ -89,71 +86,6 @@ public class NaiveGenerator {
 	}
 
 	public static boolean translationEquals(Polyomino P, Polyomino Poly) {
-		int minx_1 = P.getMinX();
-		int miny_1 = P.getMinY();
-		int minx_2 = Poly.getMinX();
-		int miny_2 = Poly.getMinY();
-		return Polyomino.equal(P.translation(-minx_1, -miny_1), Poly.translation(-minx_2, -miny_2));
-	}
-
-	public static void main(String[] args) {
-		int n = 7;
-		LinkedList<Polyomino> l = NaiveGenerator.genFreePoly(n);
-		ListOfPolyominoes list = new ListOfPolyominoes();
-		System.out.println(enuFreePoly(n));
-		for (Polyomino P : l) {
-			list.add(P);
-			System.out.println(P);
-//			Image2d img = new Image2d(100,100);
-//			P.draw(10, 50, 50, img, Color.RED);
-//			new Image2dViewer(img);
-		}
-//		Image2d img = new Image2d(100000, 100);
-//		list.draw(10, 50, 50, img, Color.RED);
-//		new Image2dViewer(img);
-	}
-}
-
-class Pair {
-	private Integer x;
-	private Integer y;
-
-	public Pair(Integer x, Integer y) {
-		this.x = x;
-		this.y = y;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == null)
-			return false;
-		Pair that = (Pair) obj;
-		return this.x == that.x && this.y == that.y;
-	}
-
-	@Override
-	public int hashCode() {
-		return this.x * 11 + this.y * 13;
-	}
-
-	public Integer getX() {
-		return this.x;
-	}
-
-	public Integer getY() {
-		return this.y;
-	}
-
-	public String toString() {
-		return "(" + this.x + "," + this.y + ") ";
-	}
-
-	public LinkedList<Pair> friends() {
-		LinkedList<Pair> friends = new LinkedList<Pair>();
-		friends.add(new Pair(this.x, this.y + 1));
-		friends.add(new Pair(this.x + 1, this.y));
-		friends.add(new Pair(this.x, this.y - 1));
-		friends.add(new Pair(this.x - 1, this.y));
-		return friends;
+		return P.fixedEqualsTo(Poly);
 	}
 }
